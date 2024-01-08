@@ -11,6 +11,8 @@ jobs:
       - run: npm install
       - run: npm run-script build
       - run: npm test
-      - uses: JS-DevTools/npm-publish@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        env:
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
