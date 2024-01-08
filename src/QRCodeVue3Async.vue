@@ -78,17 +78,14 @@ let imageUrl = await qrCode.getImageUrl(props.fileExt);
 function onDownloadClick() {
   qrCode.download(props.downloadOptions);
 }
+
+defineExpose({onDownloadClick})
 </script>
 
 <template>
   <div>
     <div v-if="imageUrl" :class="myclass">
       <img :src="imageUrl" :class="imgclass" crossorigin="anonymous" />
-    </div>
-    <div v-if="imageUrl && download">
-      <button @click="onDownloadClick" :class="downloadButton">
-        {{ ButtonName }}
-      </button>
     </div>
   </div>
 </template>
