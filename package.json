@@ -1,10 +1,9 @@
 {
   "name": "@ypbconnectplatform/qrcode-vue3",
+  "private": false,
   "version": "1.6.8",
-  "type": "module",
   "description": "Add a style and an image to your QR code Vue3",
-  "main": "./dist/index.umd.js",
-  "module": "./dist/index.es.js",
+  "main": "./dist/index.cjs.js",
   "types": "src/index.d.ts",
   "files": [
     "src",
@@ -49,9 +48,9 @@
   "scripts": {
     "test": "jest --passWithNoTests",
     "dev:vite": "vite",
-    "build": "rm dist -rf && vue-tsc && vite build",
+    "build": "if [ -d dist ]; then rm dist -rf; fi && vue-tsc && vite build",
     "preview:vite": "vite preview",
-    "buildAndPublish": "rm dist -rf && vue-tsc && vite build && npm publish"
+    "buildAndPublish": "if [-d dist ]; then rm dist -rf; fi && vue-tsc && vite build && npm publish"
   },
   "repository": {
     "type": "git",
