@@ -87,5 +87,10 @@ defineExpose({onDownloadClick})
     <div v-if="imageUrl" :class="myclass">
       <img :src="imageUrl" :class="imgclass" crossorigin="anonymous" />
     </div>
+    <div v-if="imageUrl && download">
+      <button @click.prevent="onDownloadClick" :class="downloadButton">
+        {{ ButtonName }}
+      </button>
+    </div>
   </div>
 </template>
