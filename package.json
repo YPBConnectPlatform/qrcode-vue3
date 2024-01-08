@@ -1,6 +1,5 @@
 {
-  "name": "qrcode-vue3",
-  "private": false,
+  "name": "@ypbconnectplatform/qrcode-vue3",
   "version": "1.6.8",
   "type": "module",
   "description": "Add a style and an image to your QR code Vue3",
@@ -56,7 +55,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/scholtz/qrcode-vue3.git"
+    "url": "https://github.com/YPBConnectPlatform/qrcode-vue3"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "keywords": [
     "qr",
