@@ -62,10 +62,10 @@ const props = withDefaults(defineProps<Props>(), {
 const qrCodeVue3Async = ref(null);
 
 const onDownloadClick = () => {
-  qrCodeVue3Async.value?.onDownloadClick() 
+  qrCodeVue3Async.value?.onDownloadClick();
 }
 
-defineExpose({onDownloadClick})
+defineExpose({onDownloadClick});
 </script>
 
 <template>
