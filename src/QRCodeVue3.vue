@@ -61,7 +61,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const qrCodeVue3Async = ref<InstanceType<typeof QRCodeVue3Async> | null>(null);
 
-const onDownloadClick = () => {
+const onDownloadClick = (event: Event) => {
+  event.preventDefault();
   qrCodeVue3Async.value?.onDownloadClick();
 }
 
