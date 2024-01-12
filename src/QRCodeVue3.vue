@@ -59,7 +59,7 @@ const props = withDefaults(defineProps<Props>(), {
   downloadOptions: { name: "vqr", extension: "png" }
 });
 
-const qrCodeVue3Async = ref(null);
+const qrCodeVue3Async = ref<InstanceType<typeof QRCodeVue3Async> | null>(null);
 
 const onDownloadClick = () => {
   qrCodeVue3Async.value?.onDownloadClick();
