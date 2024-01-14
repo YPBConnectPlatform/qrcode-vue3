@@ -85,7 +85,7 @@ defineExpose({ onDownloadClick });
 <template>
   <div>
     <div v-if="imageUrl" :class="myclass">
-      <img :src="imageUrl" :class="imgclass" crossorigin="anonymous" />
+      <img :src="imageUrl" :class="imgclass" crossorigin="anonymous" alt="QR Code" />
     </div>
     <div v-if="imageUrl && download">
       <Teleport to="#qr-download-button">

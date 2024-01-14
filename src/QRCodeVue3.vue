@@ -60,27 +60,25 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <Suspense>
-    <QRCodeVue3Async
-      v-bind="$attrs"
-      :background-options="props.backgroundOptions"
-      :button-name="props.ButtonName"
-      :corners-dot-options="props.cornersDotOptions"
-      :corners-square-options="props.cornersSquareOptions"
-      :dots-options="props.dotsOptions"
-      :download="props.download"
-      :download-button="props.downloadButton"
-      :download-options="props.downloadOptions"
-      :file-ext="props.fileExt"
-      :height="props.height"
-      :image="props.image"
-      :image-options="props.imageOptions"
-      :imgclass="props.imgclass"
-      :margin="props.margin"
-      :value="props.value"
-      :myclass="props.myclass"
-      :qr-options="props.qrOptions"
-      :width="props.width"
-    />
-  </Suspense>
+  <QRCodeVue3Async
+    v-bind="$attrs"
+    :background-options="props.backgroundOptions"
+    :button-name="props.ButtonName"
+    :corners-dot-options="props.cornersDotOptions"
+    :corners-square-options="props.cornersSquareOptions"
+    :dots-options="props.dotsOptions"
+    :download="props.download"
+    :download-button="props.downloadButton"
+    :download-options="props.downloadOptions"
+    :file-ext="props.fileExt"
+    :height="props.height"
+    :image="props.image"
+    :image-options="props.imageOptions"
+    :imgclass="props.imgclass"
+    :margin="props.margin"
+    :value="props.value"
+    :myclass="props.myclass"
+    :qr-options="props.qrOptions"
+    :width="props.width"
+  />
 </template>
