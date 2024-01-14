@@ -79,7 +79,7 @@ function onDownloadClick() {
   qrCode.download(props.downloadOptions);
 }
 
-defineExpose({onDownloadClick})
+defineExpose({ onDownloadClick });
 </script>
 
 <template>

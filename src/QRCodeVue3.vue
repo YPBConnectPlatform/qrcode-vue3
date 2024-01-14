@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ref } from "vue";
 import QRCodeVue3Async from "./QRCodeVue3Async.vue";
 
 export interface Props {
@@ -58,21 +57,12 @@ const props = withDefaults(defineProps<Props>(), {
   download: false,
   downloadOptions: { name: "vqr", extension: "png" }
 });
-
-const qrCodeVue3Async = ref<InstanceType<typeof QRCodeVue3Async> | null>(null);
-
-const onDownloadClick = (event: Event) => {
-  event.preventDefault();
-  qrCodeVue3Async.value?.onDownloadClick();
-}
-
-defineExpose({onDownloadClick});
 </script>
 
 <template>
   <Suspense>
     <QRCodeVue3Async
-      ref="qrCodeVue3Async"
+      v-bind="$attrs"
       :background-options="props.backgroundOptions"
       :button-name="props.ButtonName"
       :corners-dot-options="props.cornersDotOptions"
