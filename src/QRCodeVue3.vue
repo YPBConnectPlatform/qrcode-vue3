@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { defineAsyncComponent } from "vue";
+import QRCodeVue3Async from "./QRCodeVue3Async.vue";
 
-const QRCodeVue3Async = defineAsyncComponent(() => import("./QRCodeVue3Async.vue"));
 export interface Props {
   value: string;
   width: number;
@@ -61,25 +60,27 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <QRCodeVue3Async
-    v-bind="$attrs"
-    :background-options="props.backgroundOptions"
-    :button-name="props.ButtonName"
-    :corners-dot-options="props.cornersDotOptions"
-    :corners-square-options="props.cornersSquareOptions"
-    :dots-options="props.dotsOptions"
-    :download="props.download"
-    :download-button="props.downloadButton"
-    :download-options="props.downloadOptions"
-    :file-ext="props.fileExt"
-    :height="props.height"
-    :image="props.image"
-    :image-options="props.imageOptions"
-    :imgclass="props.imgclass"
-    :margin="props.margin"
-    :value="props.value"
-    :myclass="props.myclass"
-    :qr-options="props.qrOptions"
-    :width="props.width"
-  />
+  <Suspense>
+    <QRCodeVue3Async
+      v-bind="$attrs"
+      :background-options="props.backgroundOptions"
+      :button-name="props.ButtonName"
+      :corners-dot-options="props.cornersDotOptions"
+      :corners-square-options="props.cornersSquareOptions"
+      :dots-options="props.dotsOptions"
+      :download="props.download"
+      :download-button="props.downloadButton"
+      :download-options="props.downloadOptions"
+      :file-ext="props.fileExt"
+      :height="props.height"
+      :image="props.image"
+      :image-options="props.imageOptions"
+      :imgclass="props.imgclass"
+      :margin="props.margin"
+      :value="props.value"
+      :myclass="props.myclass"
+      :qr-options="props.qrOptions"
+      :width="props.width"
+    />
+  </Suspense>
 </template>
