@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import QRCodeVue3Async from "./QRCodeVue3Async.vue";
+import { defineAsyncComponent } from "vue";
 
+const QRCodeVue3Async = defineAsyncComponent(() => import("./QRCodeVue3Async.vue"));
 export interface Props {
   value: string;
   width: number;
