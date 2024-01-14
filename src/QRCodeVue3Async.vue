@@ -89,7 +89,7 @@ defineExpose({ onDownloadClick });
     <div v-if="imageUrl" :class="myclass">
       <img :src="imageUrl" :class="imgclass" crossorigin="anonymous" alt="QR Code" />
     </div>
-    <div v-if="imageUrl && download">
+    <div v-if="imageUrl && download" class="text-center">
       <button
         type="button"
         class="v-btn v-theme--light bg-primary v-btn--density-default v-btn--size-default v-btn--variant-flat rounded text-capitalize"
