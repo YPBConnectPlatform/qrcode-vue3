@@ -88,9 +88,11 @@ defineExpose({ onDownloadClick });
       <img :src="imageUrl" :class="imgclass" crossorigin="anonymous" />
     </div>
     <div v-if="imageUrl && download">
-      <button @click.prevent="onDownloadClick" :class="downloadButton">
-        {{ ButtonName }}
-      </button>
+      <Teleport to="#qr-download-button">
+        <button @click.prevent="onDownloadClick" :class="downloadButton">
+          {{ ButtonName }}
+        </button>
+      </Teleport>
     </div>
   </div>
 </template>
