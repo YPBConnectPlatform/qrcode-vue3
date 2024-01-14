@@ -20,6 +20,7 @@ export interface Props {
   image: string;
   download: boolean;
   downloadOptions: any;
+  isDownloadBtnDisabled: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -55,7 +56,8 @@ const props = withDefaults(defineProps<Props>(), {
   fileExt: "png",
   image: "",
   download: false,
-  downloadOptions: { name: "vqr", extension: "png" }
+  downloadOptions: { name: "vqr", extension: "png" },
+  isDownloadBtnDisabled: false
 });
 </script>
 
@@ -81,6 +83,7 @@ const props = withDefaults(defineProps<Props>(), {
       :myclass="props.myclass"
       :qr-options="props.qrOptions"
       :width="props.width"
+      :is-download-btn-disabled="props.isDownloadBtnDisabled"
     />
   </Suspense>
 </template>
