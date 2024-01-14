@@ -21,6 +21,7 @@ export interface Props {
   image: string;
   download: boolean;
   downloadOptions: any;
+  isDownloadBtnDisabled: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -56,7 +57,8 @@ const props = withDefaults(defineProps<Props>(), {
   fileExt: "png",
   image: "",
   download: false,
-  downloadOptions: { name: "vqr", extension: "png" }
+  downloadOptions: { name: "vqr", extension: "png" },
+  isDownloadBtnDisabled: false
 });
 
 const qrCode = new QRCodeStyling({
@@ -88,11 +90,24 @@ defineExpose({ onDownloadClick });
       <img :src="imageUrl" :class="imgclass" crossorigin="anonymous" alt="QR Code" />
     </div>
     <div v-if="imageUrl && download">
-      <Teleport to="#qr-download-button">
-        <button @click.prevent="onDownloadClick" :class="downloadButton">
-          {{ ButtonName }}
-        </button>
-      </Teleport>
+      <button
+        type="button"
+        class="v-btn v-theme--light bg-primary v-btn--density-default v-btn--size-default v-btn--variant-flat rounded text-capitalize"
+        @click.prevent="onDownloadClick"
+        :class="downloadButton"
+        :disabled="isDownloadBtnDisabled"
+      >
+        <span class="v-btn__overlay"></span><span class="v-btn__underlay"></span
+        ><span class="v-btn__prepend"
+          ><i
+            class="mdi-download mdi v-icon notranslate v-theme--light v-icon--size-default"
+            aria-hidden="true"
+          ></i></span
+        ><span class="v-btn__content" data-no-activator=""
+          ><!--v-if--><span>{{ ButtonName }}</span></span
+        ><span class="v-btn__append"></span
+        ><!---->
+      </button>
     </div>
   </div>
 </template>
