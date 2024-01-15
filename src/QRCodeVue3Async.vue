@@ -20,6 +20,7 @@ export interface Props {
   fileExt: string;
   image: string;
   download: boolean;
+  downloadWithIcon: boolean;
   downloadOptions: any;
   isDownloadBtnDisabled: boolean;
 }
@@ -57,6 +58,7 @@ const props = withDefaults(defineProps<Props>(), {
   fileExt: "png",
   image: "",
   download: false,
+  downloadWithIcon: false,
   downloadOptions: { name: "vqr", extension: "png" },
   isDownloadBtnDisabled: false
 });
@@ -89,7 +91,12 @@ defineExpose({ onDownloadClick });
     <div v-if="imageUrl" :class="myclass">
       <img :src="imageUrl" :class="imgclass" crossorigin="anonymous" alt="QR Code" />
     </div>
-    <div v-if="imageUrl && download" class="text-center">
+    <div v-if="imageUrl && download">
+      <button @click.prevent="onDownloadClick" :class="downloadButton">
+        {{ ButtonName }}
+      </button>
+    </div>
+    <div v-if="imageUrl && downloadWithIcon" class="text-center">
       <button
         type="button"
         class="v-btn v-theme--light bg-primary v-btn--density-default v-btn--size-default v-btn--variant-flat rounded text-capitalize"
