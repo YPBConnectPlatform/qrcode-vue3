@@ -73,6 +73,7 @@ const props = withDefaults(defineProps<Props>(), {
       :corners-square-options="props.cornersSquareOptions"
       :dots-options="props.dotsOptions"
       :download="props.download"
+      :download-with-icon="props.downloadWithIcon"
       :download-button="props.downloadButton"
       :download-options="props.downloadOptions"
       :file-ext="props.fileExt"
