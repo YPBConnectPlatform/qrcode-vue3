@@ -19,6 +19,7 @@ export interface Props {
   fileExt: string;
   image: string;
   download: boolean;
+  downloadWithIcon: boolean;
   downloadOptions: any;
   isDownloadBtnDisabled: boolean;
 }
@@ -56,6 +57,7 @@ const props = withDefaults(defineProps<Props>(), {
   fileExt: "png",
   image: "",
   download: false,
+  downloadWithIcon: false,
   downloadOptions: { name: "vqr", extension: "png" },
   isDownloadBtnDisabled: false
 });
