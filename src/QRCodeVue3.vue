@@ -22,6 +22,7 @@ export interface Props {
   downloadWithIcon: boolean;
   downloadOptions: any;
   isDownloadBtnDisabled: boolean;
+  previewImage: any;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -59,7 +60,11 @@ const props = withDefaults(defineProps<Props>(), {
   download: false,
   downloadWithIcon: false,
   downloadOptions: { name: "vqr", extension: "png" },
-  isDownloadBtnDisabled: false
+  isDownloadBtnDisabled: false,
+  previewImage: {
+    width: 300,
+    height: 300
+  }
 });
 </script>
 
@@ -87,6 +92,7 @@ const props = withDefaults(defineProps<Props>(), {
       :qr-options="props.qrOptions"
       :width="props.width"
       :is-download-btn-disabled="props.isDownloadBtnDisabled"
+      :preview-image="previewImage"
     />
   </Suspense>
 </template>

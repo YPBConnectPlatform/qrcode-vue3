@@ -23,6 +23,7 @@ export interface Props {
   downloadWithIcon: boolean;
   downloadOptions: any;
   isDownloadBtnDisabled: boolean;
+  previewImage: any;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -60,7 +61,11 @@ const props = withDefaults(defineProps<Props>(), {
   download: false,
   downloadWithIcon: false,
   downloadOptions: { name: "vqr", extension: "png" },
-  isDownloadBtnDisabled: false
+  isDownloadBtnDisabled: false,
+  previewImage: {
+    width: 300,
+    height: 300
+  }
 });
 
 const qrCode = new QRCodeStyling({
@@ -89,7 +94,14 @@ defineExpose({ onDownloadClick });
 <template>
   <div>
     <div v-if="imageUrl" :class="myclass">
-      <img :src="imageUrl" :class="imgclass" crossorigin="anonymous" alt="QR Code" />
+      <img
+        :src="imageUrl"
+        :class="imgclass"
+        :width="previewImage.width"
+        :height="previewImage.height"
+        crossorigin="anonymous"
+        alt="QR Code"
+      />
     </div>
     <div v-if="imageUrl && download" class="text-center">
       <button @click.prevent="onDownloadClick" :class="downloadButton">
