@@ -87,6 +87,7 @@ export interface RequiredOptions extends Options {
 }
 
 const defaultOptions: RequiredOptions = {
+  type: "canvas",
   width: 300,
   height: 300,
   data: "",

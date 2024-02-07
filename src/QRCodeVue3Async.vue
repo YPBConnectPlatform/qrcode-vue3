@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 //import { computed, reactive, ref, watch } from "vue";
 import QRCodeStyling from "./core/QRCodeStyling";
+import { DrawType } from "./types";
 
 export interface Props {
+  type: DrawType;
   value: string;
   width: number;
   height: number;
@@ -27,6 +29,7 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  type: "canvas",
   value: "",
   width: 300,
   height: 300,
