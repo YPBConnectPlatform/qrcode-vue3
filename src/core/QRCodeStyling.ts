@@ -3,7 +3,7 @@ import mergeDeep from "../tools/merge";
 import downloadURI from "../tools/downloadURI";
 import QRCanvas from "./QRCanvas";
 import QRSVG from "./QRSVG";
-import drawTypes from "@/constants/drawTypes";
+import drawTypes from "../constants/drawTypes";
 import defaultOptions, { type Options, type RequiredOptions } from "./QROptions";
 import sanitizeOptions from "../tools/sanitizeOptions";
 import type { Extension, QRCode } from "../types";
