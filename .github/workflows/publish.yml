@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - master
+      - feature/svg
 
 jobs:
   publish:
