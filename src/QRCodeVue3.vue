@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import QRCodeVue3Async from "./QRCodeVue3Async.vue";
+import { DrawType } from "./types";
 
 export interface Props {
+  type: DrawType;
   value: string;
   width: number;
   height: number;
@@ -26,6 +28,7 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  type: "canvas",
   value: "",
   width: 300,
   height: 300,
