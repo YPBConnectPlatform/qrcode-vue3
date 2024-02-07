@@ -1,5 +1,5 @@
-import { cornerDotTypes } from "@/app";
-import { CornerDotType, RotateFigureArgs, BasicFigureDrawArgs, DrawArgs } from "../../../types";
+import cornerDotTypes from "../../../../constants/cornerDotTypes";
+import { CornerDotType, RotateFigureArgs, BasicFigureDrawArgs, DrawArgs } from "../../../../types/index";
 
 export default class QRCornerDot {
   _element?: SVGElement;

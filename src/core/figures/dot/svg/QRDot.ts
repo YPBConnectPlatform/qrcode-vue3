@@ -1,5 +1,5 @@
-import { dotTypes } from "@/app";
-import { DotType, GetNeighbor, DrawArgs, BasicFigureDrawArgs, RotateFigureArgs } from "@/types";
+import dotTypes from "../../../../constants/dotTypes";
+import { DotType, GetNeighbor, DrawArgs, BasicFigureDrawArgs, RotateFigureArgs } from "../../../../types/index";
 export default class QRDot {
   _element?: SVGElement;
   _svg: SVGElement;

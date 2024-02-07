@@ -1,4 +1,4 @@
-import { DrawTypes } from "@/types";
+import { DrawTypes } from "../types/index";
 
 export default {
   canvas: "canvas",
