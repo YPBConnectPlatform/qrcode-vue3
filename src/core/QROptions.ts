@@ -7,7 +7,8 @@ import type {
   CornerDotType,
   TypeNumber,
   ErrorCorrectionLevel,
-  Mode
+  Mode,
+  DrawType
 } from "../types";
 
 export type Gradient = {
@@ -58,6 +59,7 @@ export type Options = {
 };
 
 export interface RequiredOptions extends Options {
+  type?: DrawType;
   width: number;
   height: number;
   margin: number;

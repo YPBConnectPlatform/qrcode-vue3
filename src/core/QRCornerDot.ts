@@ -10,7 +10,6 @@ type DrawArgs = {
   rotation: number;
 };
 
-
 type RotateFigureArgs = {
   x: number;
   y: number;
@@ -39,14 +38,14 @@ export default class QRCornerDot {
       case cornerDotTypes.dot:
       default:
         this._drawDot({ x, y, size, context, rotation });
-        //this._drawDot({ x, y, size, context, rotation });;
-    }  
+      //this._drawDot({ x, y, size, context, rotation });;
+    }
   }
 
   _rotateFigure({ x, y, size, context, rotation, draw }: RotateFigureArgs): void {
     const cx = x + size / 2;
     const cy = y + size / 2;
-    context.moveTo(0, 0)
+    context.moveTo(0, 0);
     context.translate(cx, cy);
     rotation && context.rotate(rotation);
     draw();
@@ -61,7 +60,7 @@ export default class QRCornerDot {
     this._rotateFigure({
       ...args,
       draw: () => {
-        context.moveTo(0, 0)
+        context.moveTo(0, 0);
         context.arc(0, 0, size / 2, 0, Math.PI * 2);
       }
     });
@@ -73,10 +72,9 @@ export default class QRCornerDot {
     this._rotateFigure({
       ...args,
       draw: () => {
-        context.moveTo(0, 0)
+        context.moveTo(0, 0);
         context.rect(-size / 2, -size / 2, size, size);
       }
     });
   }
-
 }
