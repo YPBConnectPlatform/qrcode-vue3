@@ -11,7 +11,7 @@ export default class QRDot {
   }
 
   draw(x: number, y: number, size: number, getNeighbor: GetNeighbor): void {
-    const type = this._type;
+    const type: DotType = this._type;
     let drawFunction;
 
     switch (type) {
@@ -39,8 +39,8 @@ export default class QRDot {
   }
 
   _rotateFigure({ x, y, size, rotation = 0, draw }: RotateFigureArgs): void {
-    const cx = x + size / 2;
-    const cy = y + size / 2;
+    const cx: number = x + size / 2;
+    const cy: number = y + size / 2;
 
     draw();
     this._element?.setAttribute("transform", `rotate(${(180 * rotation) / Math.PI},${cx},${cy})`);
@@ -163,12 +163,12 @@ export default class QRDot {
   }
 
   _drawRounded({ x, y, size, getNeighbor }: DrawArgs): void {
-    const leftNeighbor = getNeighbor ? +getNeighbor(-1, 0) : 0;
-    const rightNeighbor = getNeighbor ? +getNeighbor(1, 0) : 0;
-    const topNeighbor = getNeighbor ? +getNeighbor(0, -1) : 0;
-    const bottomNeighbor = getNeighbor ? +getNeighbor(0, 1) : 0;
+    const leftNeighbor: number = getNeighbor ? +getNeighbor(-1, 0) : 0;
+    const rightNeighbor: number = getNeighbor ? +getNeighbor(1, 0) : 0;
+    const topNeighbor: number = getNeighbor ? +getNeighbor(0, -1) : 0;
+    const bottomNeighbor: number = getNeighbor ? +getNeighbor(0, 1) : 0;
 
-    const neighborsCount = leftNeighbor + rightNeighbor + topNeighbor + bottomNeighbor;
+    const neighborsCount: number = leftNeighbor + rightNeighbor + topNeighbor + bottomNeighbor;
 
     if (neighborsCount === 0) {
       this._basicDot({ x, y, size, rotation: 0 });
@@ -212,12 +212,12 @@ export default class QRDot {
   }
 
   _drawExtraRounded({ x, y, size, getNeighbor }: DrawArgs): void {
-    const leftNeighbor = getNeighbor ? +getNeighbor(-1, 0) : 0;
-    const rightNeighbor = getNeighbor ? +getNeighbor(1, 0) : 0;
-    const topNeighbor = getNeighbor ? +getNeighbor(0, -1) : 0;
-    const bottomNeighbor = getNeighbor ? +getNeighbor(0, 1) : 0;
+    const leftNeighbor: number = getNeighbor ? +getNeighbor(-1, 0) : 0;
+    const rightNeighbor: number = getNeighbor ? +getNeighbor(1, 0) : 0;
+    const topNeighbor: number = getNeighbor ? +getNeighbor(0, -1) : 0;
+    const bottomNeighbor: number = getNeighbor ? +getNeighbor(0, 1) : 0;
 
-    const neighborsCount = leftNeighbor + rightNeighbor + topNeighbor + bottomNeighbor;
+    const neighborsCount: number = leftNeighbor + rightNeighbor + topNeighbor + bottomNeighbor;
 
     if (neighborsCount === 0) {
       this._basicDot({ x, y, size, rotation: 0 });
@@ -261,12 +261,12 @@ export default class QRDot {
   }
 
   _drawClassy({ x, y, size, getNeighbor }: DrawArgs): void {
-    const leftNeighbor = getNeighbor ? +getNeighbor(-1, 0) : 0;
-    const rightNeighbor = getNeighbor ? +getNeighbor(1, 0) : 0;
-    const topNeighbor = getNeighbor ? +getNeighbor(0, -1) : 0;
-    const bottomNeighbor = getNeighbor ? +getNeighbor(0, 1) : 0;
+    const leftNeighbor: number = getNeighbor ? +getNeighbor(-1, 0) : 0;
+    const rightNeighbor: number = getNeighbor ? +getNeighbor(1, 0) : 0;
+    const topNeighbor: number = getNeighbor ? +getNeighbor(0, -1) : 0;
+    const bottomNeighbor: number = getNeighbor ? +getNeighbor(0, 1) : 0;
 
-    const neighborsCount = leftNeighbor + rightNeighbor + topNeighbor + bottomNeighbor;
+    const neighborsCount: number = leftNeighbor + rightNeighbor + topNeighbor + bottomNeighbor;
 
     if (neighborsCount === 0) {
       this._basicCornersRounded({ x, y, size, rotation: Math.PI / 2 });
@@ -287,12 +287,12 @@ export default class QRDot {
   }
 
   _drawClassyRounded({ x, y, size, getNeighbor }: DrawArgs): void {
-    const leftNeighbor = getNeighbor ? +getNeighbor(-1, 0) : 0;
-    const rightNeighbor = getNeighbor ? +getNeighbor(1, 0) : 0;
-    const topNeighbor = getNeighbor ? +getNeighbor(0, -1) : 0;
-    const bottomNeighbor = getNeighbor ? +getNeighbor(0, 1) : 0;
+    const leftNeighbor: number = getNeighbor ? +getNeighbor(-1, 0) : 0;
+    const rightNeighbor: number = getNeighbor ? +getNeighbor(1, 0) : 0;
+    const topNeighbor: number = getNeighbor ? +getNeighbor(0, -1) : 0;
+    const bottomNeighbor: number = getNeighbor ? +getNeighbor(0, 1) : 0;
 
-    const neighborsCount = leftNeighbor + rightNeighbor + topNeighbor + bottomNeighbor;
+    const neighborsCount: number = leftNeighbor + rightNeighbor + topNeighbor + bottomNeighbor;
 
     if (neighborsCount === 0) {
       this._basicCornersRounded({ x, y, size, rotation: Math.PI / 2 });

@@ -12,7 +12,7 @@ export default class QRCornerDot {
   }
 
   draw(x: number, y: number, size: number, rotation: number): void {
-    const type = this._type;
+    const type: CornerDotType = this._type;
     let drawFunction;
 
     switch (type) {
@@ -28,8 +28,8 @@ export default class QRCornerDot {
   }
 
   _rotateFigure({ x, y, size, rotation = 0, draw }: RotateFigureArgs): void {
-    const cx = x + size / 2;
-    const cy = y + size / 2;
+    const cx: number = x + size / 2;
+    const cy: number = y + size / 2;
 
     draw();
     this._element?.setAttribute("transform", `rotate(${(180 * rotation) / Math.PI},${cx},${cy})`);

@@ -101,7 +101,7 @@ export default class QRCodeStyling {
     const getImageUrl = await this._drawingPromise;
     if (getImageUrl === undefined) {
       if (!this._canvas) return "";
-      const data = this._canvas.getCanvas().toDataURL(`image/${extension}`);
+      const data: string = this._canvas.getCanvas().toDataURL(`image/${extension}`);
       return data;
     }
     return "";
@@ -109,12 +109,11 @@ export default class QRCodeStyling {
 
   async getRawData(extension: Extension = "png"): Promise<Blob | null> {
     if (!this._qr) throw "QR code is empty";
-    const element = await this._getQRStylingElement();
+    const element: QRSVG = await this._getQRStylingElement();
 
     if (extension.toLowerCase() === "svg") {
       const serializer = new XMLSerializer();
-      const source = serializer.serializeToString((element as unknown as QRSVG).getElement());
-
+      const source: string = serializer.serializeToString((element as unknown as QRSVG).getElement());
       return new Blob(['<?xml version="1.0" standalone="no"?>\r\n' + source], { type: "image/svg+xml" });
     } else {
       return new Promise((resolve) =>
@@ -131,18 +130,18 @@ export default class QRCodeStyling {
 
       const opt = <DownloadOptions>downloadOptions;
       const extension = opt.extension || "png";
-      const name = opt.name || "qr";
+      const name: string = opt.name || "qr";
 
       if (extension.toLowerCase() === "svg") {
-        const element = await this._getQRStylingElement();
+        const element: QRSVG = await this._getQRStylingElement();
         const serializer = new XMLSerializer();
-        let source = serializer.serializeToString((element as unknown as QRSVG).getElement());
+        let source: string = serializer.serializeToString((element as unknown as QRSVG).getElement());
         source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
-        const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
+        const url: string = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
         downloadURI(url, `${name}.svg`);
       } else {
         if (!this._canvas) return;
-        const data = this._canvas.getCanvas().toDataURL(`image/${extension}`);
+        const data: string = this._canvas.getCanvas().toDataURL(`image/${extension}`);
         downloadURI(data, `${name}.${extension}`);
       }
     });

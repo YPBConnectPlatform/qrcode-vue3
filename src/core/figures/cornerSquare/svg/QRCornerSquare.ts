@@ -11,7 +11,7 @@ export default class QRCornerSquare {
   }
 
   draw(x: number, y: number, size: number, rotation: number): void {
-    const type = this._type;
+    const type: CornerSquareType = this._type;
     let drawFunction;
 
     switch (type) {
@@ -30,8 +30,8 @@ export default class QRCornerSquare {
   }
 
   _rotateFigure({ x, y, size, rotation = 0, draw }: RotateFigureArgs): void {
-    const cx = x + size / 2;
-    const cy = y + size / 2;
+    const cx: number = x + size / 2;
+    const cy: number = y + size / 2;
 
     draw();
     this._element?.setAttribute("transform", `rotate(${(180 * rotation) / Math.PI},${cx},${cy})`);
@@ -39,7 +39,7 @@ export default class QRCornerSquare {
 
   _basicDot(args: BasicFigureDrawArgs): void {
     const { size, x, y } = args;
-    const dotSize = size / 7;
+    const dotSize: number = size / 7;
 
     this._rotateFigure({
       ...args,
@@ -61,7 +61,7 @@ export default class QRCornerSquare {
 
   _basicSquare(args: BasicFigureDrawArgs): void {
     const { size, x, y } = args;
-    const dotSize = size / 7;
+    const dotSize: number = size / 7;
 
     this._rotateFigure({
       ...args,
@@ -87,7 +87,7 @@ export default class QRCornerSquare {
 
   _basicExtraRounded(args: BasicFigureDrawArgs): void {
     const { size, x, y } = args;
-    const dotSize = size / 7;
+    const dotSize: number = size / 7;
 
     this._rotateFigure({
       ...args,

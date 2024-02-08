@@ -7,7 +7,7 @@ import { RequiredOptions, Gradient } from "./QROptions";
 import gradientTypes from "../constants/gradientTypes";
 import { QRCode, FilterFunction } from "../types";
 
-const squareMask = [
+const squareMask: number[][] = [
   [1, 1, 1, 1, 1, 1, 1],
   [1, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 1],
@@ -17,7 +17,7 @@ const squareMask = [
   [1, 1, 1, 1, 1, 1, 1]
 ];
 
-const dotMask = [
+const dotMask: number[][] = [
   [0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0],
   [0, 0, 1, 1, 1, 0, 0],
@@ -65,7 +65,7 @@ export default class QRSVG {
   }
 
   clear(): void {
-    const oldElement = this._element;
+    const oldElement: SVGElement = this._element;
     this._element = oldElement.cloneNode(false) as SVGElement;
     oldElement?.parentNode?.replaceChild(this._element, oldElement);
     this._defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
@@ -75,9 +75,9 @@ export default class QRSVG {
   }
 
   async drawQR(qr: QRCode): Promise<void> {
-    const count = qr.getModuleCount();
-    const minSize = Math.min(this._options.width, this._options.height) - this._options.margin * 2;
-    const dotSize = Math.floor(minSize / count);
+    const count: number = qr.getModuleCount();
+    const minSize: number = Math.min(this._options.width, this._options.height) - this._options.margin * 2;
+    const dotSize: number = Math.floor(minSize / count);
     let drawImageSize = {
       hideXDots: 0,
       hideYDots: 0,
@@ -92,8 +92,8 @@ export default class QRSVG {
       await this.loadImage();
       if (!this._image) return;
       const { imageOptions, qrOptions } = this._options;
-      const coverLevel = imageOptions.imageSize * errorCorrectionPercents[qrOptions.errorCorrectionLevel];
-      const maxHiddenDots = Math.floor(coverLevel * count * count);
+      const coverLevel: number = imageOptions.imageSize * errorCorrectionPercents[qrOptions.errorCorrectionLevel];
+      const maxHiddenDots: number = Math.floor(coverLevel * count * count);
 
       drawImageSize = calculateImageSize({
         originalWidth: this._image.width,
@@ -138,12 +138,12 @@ export default class QRSVG {
   }
 
   drawBackground(): void {
-    const element = this._element;
-    const options = this._options;
+    const element: SVGElement = this._element;
+    const options: RequiredOptions = this._options;
 
     if (element) {
-      const gradientOptions = options.backgroundOptions?.gradient;
-      const color = options.backgroundOptions?.color;
+      const gradientOptions: Gradient | undefined = options.backgroundOptions?.gradient;
+      const color: string = options.backgroundOptions?.color;
 
       if (gradientOptions) {
         this._createColor({
@@ -170,17 +170,17 @@ export default class QRSVG {
       throw "QR code is not defined";
     }
 
-    const options = this._options;
-    const count = this._qr.getModuleCount();
+    const options: RequiredOptions = this._options;
+    const count: number = this._qr.getModuleCount();
 
     if (count > options.width || count > options.height) {
       throw "The canvas is too small.";
     }
 
-    const minSize = Math.min(options.width, options.height) - options.margin * 2;
-    const dotSize = Math.floor(minSize / count);
-    const xBeginning = Math.floor((options.width - count * dotSize) / 2);
-    const yBeginning = Math.floor((options.height - count * dotSize) / 2);
+    const minSize: number = Math.min(options.width, options.height) - options.margin * 2;
+    const dotSize: number = Math.floor(minSize / count);
+    const xBeginning: number = Math.floor((options.width - count * dotSize) / 2);
+    const yBeginning: number = Math.floor((options.height - count * dotSize) / 2);
     const dot = new QRDot({ svg: this._element, type: options.dotsOptions.type });
     if (options.dotsOptions?.gradient) {
       this._dotsClipPath = document.createElementNS("http://www.w3.org/2000/svg", "clipPath");
@@ -241,30 +241,30 @@ export default class QRSVG {
       throw "QR code is not defined";
     }
 
-    const element = this._element;
-    const options = this._options;
+    const element: SVGElement = this._element;
+    const options: RequiredOptions = this._options;
 
     if (!element) {
       throw "Element code is not defined";
     }
 
-    const count = this._qr.getModuleCount();
-    const minSize = Math.min(options.width, options.height) - options.margin * 2;
-    const dotSize = Math.floor(minSize / count);
-    const cornersSquareSize = dotSize * 7;
-    const cornersDotSize = dotSize * 3;
-    const xBeginning = Math.floor((options.width - count * dotSize) / 2);
-    const yBeginning = Math.floor((options.height - count * dotSize) / 2);
+    const count: number = this._qr.getModuleCount();
+    const minSize: number = Math.min(options.width, options.height) - options.margin * 2;
+    const dotSize: number = Math.floor(minSize / count);
+    const cornersSquareSize: number = dotSize * 7;
+    const cornersDotSize: number = dotSize * 3;
+    const xBeginning: number = Math.floor((options.width - count * dotSize) / 2);
+    const yBeginning: number = Math.floor((options.height - count * dotSize) / 2);
 
     [
       [0, 0, 0],
       [1, 0, Math.PI / 2],
       [0, 1, -Math.PI / 2]
     ].forEach(([column, row, rotation]) => {
-      const x = xBeginning + column * dotSize * (count - 7);
-      const y = yBeginning + row * dotSize * (count - 7);
-      let cornersSquareClipPath = this._dotsClipPath;
-      let cornersDotClipPath = this._dotsClipPath;
+      const x: number = xBeginning + column * dotSize * (count - 7);
+      const y: number = yBeginning + row * dotSize * (count - 7);
+      let cornersSquareClipPath: SVGElement | undefined = this._dotsClipPath;
+      let cornersDotClipPath: SVGElement | undefined = this._dotsClipPath;
 
       if (options.cornersSquareOptions?.gradient) {
         cornersSquareClipPath = document.createElementNS("http://www.w3.org/2000/svg", "clipPath");
@@ -422,15 +422,15 @@ export default class QRSVG {
     count: number;
     dotSize: number;
   }): void {
-    const options = this._options;
-    const xBeginning = Math.floor((options.width - count * dotSize) / 2);
-    const yBeginning = Math.floor((options.height - count * dotSize) / 2);
-    const dx = xBeginning + options.imageOptions.margin + (count * dotSize - width) / 2;
-    const dy = yBeginning + options.imageOptions.margin + (count * dotSize - height) / 2;
-    const dw = width - options.imageOptions.margin * 2;
-    const dh = height - options.imageOptions.margin * 2;
+    const options: RequiredOptions = this._options;
+    const xBeginning: number = Math.floor((options.width - count * dotSize) / 2);
+    const yBeginning: number = Math.floor((options.height - count * dotSize) / 2);
+    const dx: number = xBeginning + options.imageOptions.margin + (count * dotSize - width) / 2;
+    const dy: number = yBeginning + options.imageOptions.margin + (count * dotSize - height) / 2;
+    const dw: number = width - options.imageOptions.margin * 2;
+    const dh: number = height - options.imageOptions.margin * 2;
 
-    const image = document.createElementNS("http://www.w3.org/2000/svg", "image");
+    const image: SVGImageElement = document.createElementNS("http://www.w3.org/2000/svg", "image");
     image.setAttribute("href", options.image || "");
     image.setAttribute("x", String(dx));
     image.setAttribute("y", String(dy));
@@ -459,8 +459,8 @@ export default class QRSVG {
     width: number;
     name: string;
   }): void {
-    const size = width > height ? width : height;
-    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    const size: number = width > height ? width : height;
+    const rect: SVGRectElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     rect.setAttribute("x", String(x));
     rect.setAttribute("y", String(y));
     rect.setAttribute("height", String(height));
@@ -479,12 +479,12 @@ export default class QRSVG {
         gradient.setAttribute("cy", String(y + height / 2));
         gradient.setAttribute("r", String(size / 2));
       } else {
-        const rotation = ((options.rotation || 0) + additionalRotation) % (2 * Math.PI);
-        const positiveRotation = (rotation + 2 * Math.PI) % (2 * Math.PI);
-        let x0 = x + width / 2;
-        let y0 = y + height / 2;
-        let x1 = x + width / 2;
-        let y1 = y + height / 2;
+        const rotation: number = ((options.rotation || 0) + additionalRotation) % (2 * Math.PI);
+        const positiveRotation: number = (rotation + 2 * Math.PI) % (2 * Math.PI);
+        let x0: number = x + width / 2;
+        let y0: number = y + height / 2;
+        let x1: number = x + width / 2;
+        let y1: number = y + height / 2;
 
         if (
           (positiveRotation >= 0 && positiveRotation <= 0.25 * Math.PI) ||
