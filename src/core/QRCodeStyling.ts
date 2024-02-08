@@ -107,6 +107,22 @@ export default class QRCodeStyling {
     return "";
   }
 
+  async getRawData(extension: Extension = "png"): Promise<Blob | null> {
+    if (!this._qr) throw "QR code is empty";
+    const element = await this._getQRStylingElement();
+
+    if (extension.toLowerCase() === "svg") {
+      const serializer = new XMLSerializer();
+      const source = serializer.serializeToString((element as unknown as QRSVG).getElement());
+
+      return new Blob(['<?xml version="1.0" standalone="no"?>\r\n' + source], { type: "image/svg+xml" });
+    } else {
+      return new Promise((resolve) =>
+        (element as unknown as QRCanvas).getCanvas().toBlob(resolve, `image/${extension}`, 1)
+      );
+    }
+  }
+
   async download(downloadOptions?: Partial<DownloadOptions>): Promise<void> {
     if (!this._drawingPromise) return;
 
