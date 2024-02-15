@@ -6,8 +6,9 @@ export interface UnknownObject {
 export type DotType = "dots" | "rounded" | "classy" | "classy-rounded" | "square" | "extra-rounded";
 export type CornerDotType = "dot" | "square";
 export type CornerSquareType = "dot" | "square" | "extra-rounded";
-export type Extension = string;
+export type Extension = "svg" | "png" | "jpeg" | "webp";
 export type GradientType = "radial" | "linear";
+export type DrawType = "canvas" | "svg";
 
 export interface DotTypes {
   [key: string]: DotType;
@@ -23,6 +24,10 @@ export interface CornerDotTypes {
 
 export interface CornerSquareTypes {
   [key: string]: CornerSquareType;
+}
+
+export interface DrawTypes {
+  [key: string]: DrawType;
 }
 
 export type TypeNumber =
@@ -83,3 +88,46 @@ export interface QRCode {
   createASCII(cellSize?: number, margin?: number): string;
   renderTo2dContext(context: CanvasRenderingContext2D, cellSize?: number): void;
 }
+export type FilterFunction = (i: number, j: number) => boolean;
+
+export type DownloadOptions = {
+  name?: string;
+  extension?: Extension;
+};
+
+export type DrawArgs = {
+  x: number;
+  y: number;
+  size: number;
+  rotation?: number;
+  getNeighbor?: GetNeighbor;
+};
+
+export type BasicFigureDrawArgs = {
+  x: number;
+  y: number;
+  size: number;
+  rotation?: number;
+};
+
+export type RotateFigureArgs = {
+  x: number;
+  y: number;
+  size: number;
+  rotation?: number;
+  draw: () => void;
+};
+
+export type DrawArgsCanvas = DrawArgs & {
+  context: CanvasRenderingContext2D;
+};
+
+export type BasicFigureDrawArgsCanvas = BasicFigureDrawArgs & {
+  context: CanvasRenderingContext2D;
+};
+
+export type RotateFigureArgsCanvas = RotateFigureArgs & {
+  context: CanvasRenderingContext2D;
+};
+
+export type GetNeighbor = (x: number, y: number) => boolean;

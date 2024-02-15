@@ -6,9 +6,7 @@ import QRCornerSquare from "./QRCornerSquare";
 import QRCornerDot from "./QRCornerDot";
 import type { RequiredOptions, Gradient } from "./QROptions";
 import gradientTypes from "../constants/gradientTypes";
-import type { QRCode } from "../types";
-
-type FilterFunction = (i: number, j: number) => boolean;
+import type { FilterFunction, QRCode } from "../types";
 
 const squareMask = [
   [1, 1, 1, 1, 1, 1, 1],
