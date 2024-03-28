@@ -12,7 +12,7 @@ export interface Props {
   imgclass: string;
   myclass: string;
   downloadButton: string;
-  ButtonName: string;
+  buttonName: string;
   qrOptions: any;
   imageOptions: any;
   dotsOptions: any;
@@ -26,6 +26,7 @@ export interface Props {
   downloadOptions: any;
   isDownloadBtnDisabled: boolean;
   previewImage: any;
+  dataIdText?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -37,7 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
   imgclass: "",
   myclass: "",
   downloadButton: "",
-  ButtonName: "Download",
+  buttonName: "Download",
   qrOptions: {
     typeNumber: 0,
     mode: "Byte",
@@ -107,8 +108,8 @@ defineExpose({ onDownloadClick });
       />
     </div>
     <div v-if="imageUrl && download" class="text-center">
-      <button @click.prevent="onDownloadClick" :class="downloadButton">
-        {{ ButtonName }}
+      <button @click.prevent="onDownloadClick" :class="downloadButton" :data-id="dataIdText">
+        {{ buttonName }}
       </button>
     </div>
     <div v-if="imageUrl && downloadWithIcon" class="text-center">
@@ -118,6 +119,7 @@ defineExpose({ onDownloadClick });
         @click.prevent="onDownloadClick"
         :class="downloadButton"
         :disabled="isDownloadBtnDisabled"
+        :data-id="dataIdText"
       >
         <span class="v-btn__overlay"></span><span class="v-btn__underlay"></span
         ><span class="v-btn__prepend"
@@ -126,7 +128,7 @@ defineExpose({ onDownloadClick });
             aria-hidden="true"
           ></i></span
         ><span class="v-btn__content" data-no-activator=""
-          ><!--v-if--><span>{{ ButtonName }}</span></span
+          ><!--v-if--><span>{{ buttonName }}</span></span
         ><span class="v-btn__append"></span
         ><!---->
       </button>
