@@ -11,7 +11,7 @@ export interface Props {
   imgclass: string;
   myclass: string;
   downloadButton: string;
-  ButtonName: string;
+  buttonName: string;
   qrOptions: any;
   imageOptions: any;
   dotsOptions: any;
@@ -25,6 +25,7 @@ export interface Props {
   downloadOptions: any;
   isDownloadBtnDisabled: boolean;
   previewImage: any;
+  dataIdText?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -36,7 +37,7 @@ const props = withDefaults(defineProps<Props>(), {
   imgclass: "",
   myclass: "",
   downloadButton: "",
-  ButtonName: "Download",
+  buttonName: "Download",
   qrOptions: {
     typeNumber: 0,
     mode: "Byte",
@@ -76,7 +77,7 @@ const props = withDefaults(defineProps<Props>(), {
     <QRCodeVue3Async
       v-bind="$attrs"
       :background-options="props.backgroundOptions"
-      :button-name="props.ButtonName"
+      :button-name="props.buttonName"
       :corners-dot-options="props.cornersDotOptions"
       :corners-square-options="props.cornersSquareOptions"
       :dots-options="props.dotsOptions"
@@ -96,6 +97,7 @@ const props = withDefaults(defineProps<Props>(), {
       :width="props.width"
       :is-download-btn-disabled="props.isDownloadBtnDisabled"
       :preview-image="previewImage"
+      :data-id-text="dataIdText"
     />
   </Suspense>
 </template>
