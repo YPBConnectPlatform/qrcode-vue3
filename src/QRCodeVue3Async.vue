@@ -133,6 +133,6 @@ defineExpose({ onDownloadClick });
         ><!---->
       </button>
     </div>
-    <slot name="custom-download-button" />
+    <slot name="custom" />
   </div>
 </template>

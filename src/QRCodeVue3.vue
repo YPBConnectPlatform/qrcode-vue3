@@ -98,6 +98,8 @@ const props = withDefaults(defineProps<Props>(), {
       :is-download-btn-disabled="props.isDownloadBtnDisabled"
       :preview-image="previewImage"
       :data-id-text="dataIdText"
-    />
+    >
+      <template #custom><slot name="custom-download-button"></slot> </template>
+    </QRCodeVue3Async>
   </Suspense>
 </template>
