@@ -86,7 +86,7 @@ const qrCode = new QRCodeStyling({
   cornersDotOptions: props.cornersDotOptions
 });
 
-let imageUrl: string = await qrCode.getImageUrl(props.fileExt);
+let imageUrl = await qrCode.getImageUrl(props.fileExt);
 
 function onDownloadClick() {
   qrCode.download(props.downloadOptions);
@@ -133,6 +133,5 @@ defineExpose({ onDownloadClick });
         ><!---->
       </button>
     </div>
-    <slot name="custom" />
   </div>
 </template>
