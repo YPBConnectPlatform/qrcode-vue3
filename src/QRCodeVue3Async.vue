@@ -72,10 +72,6 @@ const props = withDefaults(defineProps<Props>(), {
   }
 });
 
-const emit = defineEmits<{
-  (e: "click:download", value): void;
-}>();
-
 const qrCode = new QRCodeStyling({
   data: props.value,
   width: props.width,
@@ -94,7 +90,6 @@ let imageUrl: string = await qrCode.getImageUrl(props.fileExt);
 
 function onDownloadClick() {
   qrCode.download(props.downloadOptions);
-  emit("click:download", props.downloadOptions);
 }
 
 defineExpose({ onDownloadClick });
