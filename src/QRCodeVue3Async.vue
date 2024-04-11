@@ -73,7 +73,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'click:download'): void;
+  (e: "click:download", value): void;
 }>();
 
 const qrCode = new QRCodeStyling({
@@ -94,7 +94,7 @@ let imageUrl: string = await qrCode.getImageUrl(props.fileExt);
 
 function onDownloadClick() {
   qrCode.download(props.downloadOptions);
-  emit('click:download', props.downloadOptions)
+  emit("click:download", props.downloadOptions);
 }
 
 defineExpose({ onDownloadClick });
@@ -138,6 +138,6 @@ defineExpose({ onDownloadClick });
         ><!---->
       </button>
     </div>
-    <slot name="custom-download-button"/>
+    <slot name="custom-download-button" />
   </div>
 </template>
