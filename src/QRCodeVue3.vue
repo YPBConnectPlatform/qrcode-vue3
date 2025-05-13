@@ -99,6 +99,7 @@ const props = withDefaults(defineProps<Props>(), {
       :preview-image="previewImage"
       :data-id-text="dataIdText"
       ref="qrImageRef"
+      id="qrImageRef"
     />
   </Suspense>
 </template>
