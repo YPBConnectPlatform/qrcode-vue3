@@ -99,7 +99,6 @@ defineExpose({ onDownloadClick });
   <div>
     <div v-if="imageUrl" :class="myclass">
       <img
-        ref="qrImgEl"
         id="qrImgEl"
         :src="imageUrl"
         :class="imgclass"
