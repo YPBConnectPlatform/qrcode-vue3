@@ -98,7 +98,6 @@ const props = withDefaults(defineProps<Props>(), {
       :is-download-btn-disabled="props.isDownloadBtnDisabled"
       :preview-image="previewImage"
       :data-id-text="dataIdText"
-      ref="qrImageRef"
     />
   </Suspense>
 </template>
