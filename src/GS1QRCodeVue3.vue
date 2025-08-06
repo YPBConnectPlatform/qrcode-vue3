@@ -3,7 +3,7 @@ import GS1QRCodeVue3Async from "./GS1QRCodeVue3Async.vue";
 import { GS1Options } from "./core/QROptions";
 import { Extension } from "./types";
 
-defineProps<{
+interface Props {
   width?: number;
   height?: number;
   margin?: number;
@@ -54,7 +54,12 @@ defineProps<{
   gs1Options?: Partial<GS1Options>;
   showGs1Info?: boolean;
   gs1InfoClass?: string;
-}>();
+}
+
+withDefaults(defineProps<Props>(), {
+  downloadWithIcon: false,
+  isDownloadBtnDisabled: false
+});
 
 defineOptions({
   inheritAttrs: false
