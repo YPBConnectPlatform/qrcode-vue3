@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent, computed, useAttrs } from "vue";
+import GS1QRCodeVue3Async from "./GS1QRCodeVue3Async.vue";
 import { GS1Options } from "./core/QROptions";
 import { Extension } from "./types";
 
@@ -56,21 +56,43 @@ interface Props {
   gs1InfoClass?: string;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   downloadWithIcon: false,
   isDownloadBtnDisabled: false
 });
 
-const GS1QRCodeVue3Async = defineAsyncComponent(() => import("./GS1QRCodeVue3Async.vue"));
-
-const attrs = useAttrs();
-
-const mergedProps = computed(() => ({
-  ...attrs,
-  ...props
-}));
+defineOptions({
+  inheritAttrs: false
+});
 </script>
 
 <template>
-  <component :is="GS1QRCodeVue3Async" v-bind="mergedProps" />
+  <Suspense>
+    <GS1QRCodeVue3Async
+      :width="width"
+      :height="height"
+      :margin="margin"
+      :data="data"
+      :image="image"
+      :qrOptions="qrOptions"
+      :imageOptions="imageOptions"
+      :dotsOptions="dotsOptions"
+      :backgroundOptions="backgroundOptions"
+      :cornersSquareOptions="cornersSquareOptions"
+      :cornersDotOptions="cornersDotOptions"
+      :download="download"
+      :myclass="myclass"
+      :imgclass="imgclass"
+      :downloadButton="downloadButton"
+      :downloadWithIcon="downloadWithIcon"
+      :downloadOptions="downloadOptions"
+      :isDownloadBtnDisabled="isDownloadBtnDisabled"
+      :buttonName="buttonName"
+      :dataIdText="dataIdText"
+      :gs1Options="gs1Options"
+      :showGs1Info="showGs1Info"
+      :gs1InfoClass="gs1InfoClass"
+      v-bind="$attrs"
+    />
+  </Suspense>
 </template>

@@ -44,12 +44,12 @@ interface Props {
   myclass?: string;
   imgclass?: string;
   downloadButton: string;
-  downloadWithIcon?: boolean;
+  downloadWithIcon: boolean;
   downloadOptions?: {
     name?: string;
     extension?: Extension;
   };
-  isDownloadBtnDisabled?: boolean;
+  isDownloadBtnDisabled: boolean;
   buttonName: string;
   dataIdText?: string;
   // GS1-specific
