@@ -4,7 +4,7 @@ import downloadURI from "../tools/downloadURI";
 import QRCanvas from "./QRCanvas";
 import QRSVG from "./QRSVG";
 import drawTypes from "../constants/drawTypes";
-import defaultOptions, { type Options, type RequiredOptions } from "./QROptions";
+import defaultOptions, { GS1Dimensions, GS1Options, type Options, type RequiredOptions } from "./QROptions";
 import sanitizeOptions from "../tools/sanitizeOptions";
 import type { Extension, QRCode } from "../types";
 import qrcode from "qrcode-generator";
@@ -22,6 +22,7 @@ export default class QRCodeStyling {
   _qr?: QRCode;
   _drawingPromise?: Promise<void>;
   _svgDrawingPromise?: Promise<void>;
+  _gs1Dimensions?: GS1Dimensions | null;
 
   constructor(options?: Partial<Options>) {
     this._options = options ? sanitizeOptions(mergeDeep(defaultOptions, options) as RequiredOptions) : defaultOptions;
@@ -32,6 +33,69 @@ export default class QRCodeStyling {
     if (container) {
       container.innerHTML = "";
     }
+  }
+
+  private _calculateGS1Dimensions(): GS1Dimensions | null {
+    if (!this._options.gs1Options?.enabled || !this._qr) {
+      return null;
+    }
+
+    const gs1Config = this._options.gs1Options as GS1Options;
+    const moduleCount = this._qr.getModuleCount();
+
+    // Add quiet zone (4 modules on each side = 8 total)
+    const totalModules = moduleCount + gs1Config.quietZone * 2;
+
+    // Convert mm to pixels
+    const pixelsPerMM = gs1Config.printDPI / 25.4;
+    const widthInMM = totalModules * gs1Config.moduleSize;
+    const heightInMM = widthInMM; // QR codes are square
+    const widthInPixels = Math.round(widthInMM * pixelsPerMM);
+    const heightInPixels = widthInPixels;
+
+    // Calculate module size in pixels
+    const modulePixelSize = widthInPixels / totalModules;
+    const quietZonePixels = modulePixelSize * gs1Config.quietZone;
+
+    const dimensions: GS1Dimensions = {
+      widthInPixels,
+      heightInPixels,
+      widthInMM,
+      heightInMM,
+      moduleCount,
+      totalModules,
+      modulePixelSize,
+      quietZonePixels
+    };
+
+    // Validate minimum size if enforced
+    if (gs1Config.enforceMinimumSize) {
+      const minSizeInMM = (moduleCount + 8) * 0.396; // minimum module size
+      if (widthInMM < minSizeInMM) {
+        throw new Error(
+          `GS1 QR Code too small. Minimum size: ${minSizeInMM.toFixed(2)}mm, current: ${widthInMM.toFixed(2)}mm`
+        );
+      }
+    }
+
+    return dimensions;
+  }
+
+  private _processGS1Data(data: string): string {
+    if (!this._options.gs1Options?.enabled) {
+      return data;
+    }
+
+    const gs1Config = this._options.gs1Options as GS1Options;
+
+    if (gs1Config.enforceUppercase) {
+      return data.toUpperCase();
+    }
+
+    return data;
+  }
+  getGS1Dimensions(): GS1Dimensions | null {
+    return this._gs1Dimensions || null;
   }
 
   async _getQRStylingElement(): Promise<QRSVG> {
@@ -58,9 +122,22 @@ export default class QRCodeStyling {
       return;
     }
 
+    // Process data for GS1 compliance
+    const processedData = this._processGS1Data(this._options.data);
+
     this._qr = <QRCode>qrcode(this._options.qrOptions.typeNumber, this._options.qrOptions.errorCorrectionLevel);
-    this._qr.addData(this._options.data, this._options.qrOptions.mode || getMode(this._options.data));
+    this._qr.addData(processedData, this._options.qrOptions.mode || getMode(processedData));
     this._qr.make();
+
+    // Calculate GS1 dimensions if enabled
+    this._gs1Dimensions = this._calculateGS1Dimensions();
+
+    // Override canvas/SVG dimensions for GS1 compliance
+    if (this._gs1Dimensions) {
+      this._options.width = this._gs1Dimensions.widthInPixels;
+      this._options.height = this._gs1Dimensions.heightInPixels;
+    }
+
     if (this._options.type === drawTypes.svg) {
       this._svg = new QRSVG(this._options);
       this._svgDrawingPromise = this._svg.drawQR(this._qr);
@@ -88,7 +165,9 @@ export default class QRCodeStyling {
     if (this._options.type === drawTypes.svg) {
       if (this._svg) {
         container.appendChild(this._svg.getElement());
-      } else if (this._canvas) {
+      }
+    } else {
+      if (this._canvas) {
         container.appendChild(this._canvas.getCanvas());
       }
     }

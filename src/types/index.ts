@@ -1,3 +1,5 @@
+import { GS1Dimensions } from "@/core/QROptions";
+
 export interface UnknownObject {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
@@ -131,3 +133,18 @@ export type RotateFigureArgsCanvas = RotateFigureArgs & {
 };
 
 export type GetNeighbor = (x: number, y: number) => boolean;
+
+export interface GS1ValidationResult {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+  dimensions: GS1Dimensions | null;
+}
+
+export interface GS1PrintSpecs {
+  moduleSize: number;
+  printDPI: number;
+  physicalWidth: number;
+  physicalHeight: number;
+  recommendedPrintSize: string;
+}
