@@ -3,7 +3,7 @@ import GS1QRCodeVue3Async from "./GS1QRCodeVue3Async.vue";
 import { GS1Options } from "./core/QROptions";
 import { Extension } from "./types";
 
-interface Props {
+export interface Props {
   width?: number;
   height?: number;
   margin?: number;
@@ -56,7 +56,7 @@ interface Props {
   gs1InfoClass?: string;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   downloadWithIcon: false,
   isDownloadBtnDisabled: false
 });
@@ -69,30 +69,30 @@ defineOptions({
 <template>
   <Suspense>
     <GS1QRCodeVue3Async
-      :width="width"
-      :height="height"
-      :margin="margin"
-      :data="data"
-      :image="image"
-      :qrOptions="qrOptions"
-      :imageOptions="imageOptions"
-      :dotsOptions="dotsOptions"
-      :backgroundOptions="backgroundOptions"
-      :cornersSquareOptions="cornersSquareOptions"
-      :cornersDotOptions="cornersDotOptions"
-      :download="download"
-      :myclass="myclass"
-      :imgclass="imgclass"
-      :downloadButton="downloadButton"
-      :downloadWithIcon="downloadWithIcon"
-      :downloadOptions="downloadOptions"
-      :isDownloadBtnDisabled="isDownloadBtnDisabled"
-      :buttonName="buttonName"
-      :dataIdText="dataIdText"
-      :gs1Options="gs1Options"
-      :showGs1Info="showGs1Info"
-      :gs1InfoClass="gs1InfoClass"
       v-bind="$attrs"
+      :width="props.width"
+      :height="props.height"
+      :margin="props.margin"
+      :data="props.data"
+      :image="props.image"
+      :qrOptions="props.qrOptions"
+      :imageOptions="props.imageOptions"
+      :dotsOptions="props.dotsOptions"
+      :backgroundOptions="props.backgroundOptions"
+      :cornersSquareOptions="props.cornersSquareOptions"
+      :cornersDotOptions="props.cornersDotOptions"
+      :download="props.download"
+      :myclass="props.myclass"
+      :imgclass="props.imgclass"
+      :downloadButton="props.downloadButton"
+      :downloadWithIcon="props.downloadWithIcon"
+      :downloadOptions="props.downloadOptions"
+      :isDownloadBtnDisabled="props.isDownloadBtnDisabled"
+      :buttonName="props.buttonName"
+      :dataIdText="props.dataIdText"
+      :gs1Options="props.gs1Options"
+      :showGs1Info="props.showGs1Info"
+      :gs1InfoClass="props.gs1InfoClass"
     />
   </Suspense>
 </template>
