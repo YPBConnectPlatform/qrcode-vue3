@@ -68,6 +68,7 @@ defineOptions({
 
 <template>
   <Suspense>
+    {{ props }}
     <GS1QRCodeVue3Async
       v-bind="$attrs"
       :width="props.width"
@@ -75,24 +76,24 @@ defineOptions({
       :margin="props.margin"
       :data="props.data"
       :image="props.image"
-      :qrOptions="props.qrOptions"
-      :imageOptions="props.imageOptions"
-      :dotsOptions="props.dotsOptions"
-      :backgroundOptions="props.backgroundOptions"
-      :cornersSquareOptions="props.cornersSquareOptions"
-      :cornersDotOptions="props.cornersDotOptions"
+      :qr-options="props.qrOptions"
+      :image-options="props.imageOptions"
+      :dots-options="props.dotsOptions"
+      :background-options="props.backgroundOptions"
+      :corners-square-options="props.cornersSquareOptions"
+      :corners-dot-options="props.cornersDotOptions"
       :download="props.download"
       :myclass="props.myclass"
       :imgclass="props.imgclass"
-      :downloadButton="props.downloadButton"
-      :downloadWithIcon="props.downloadWithIcon"
-      :downloadOptions="props.downloadOptions"
-      :isDownloadBtnDisabled="props.isDownloadBtnDisabled"
-      :buttonName="props.buttonName"
-      :dataIdText="props.dataIdText"
-      :gs1Options="props.gs1Options"
-      :showGs1Info="props.showGs1Info"
-      :gs1InfoClass="props.gs1InfoClass"
+      :download-button="props.downloadButton"
+      :download-with-icon="props.downloadWithIcon"
+      :download-options="props.downloadOptions"
+      :is-download-btn-disabled="props.isDownloadBtnDisabled"
+      :button-name="props.buttonName"
+      :data-id-text="props.dataIdText"
+      :gs1-options="props.gs1Options"
+      :show-gs1-info="props.showGs1Info"
+      :gs1-info-class="props.gs1InfoClass"
     />
   </Suspense>
 </template>
