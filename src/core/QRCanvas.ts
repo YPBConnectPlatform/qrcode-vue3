@@ -4,7 +4,7 @@ import errorCorrectionPercents from "../constants/errorCorrectionPercents";
 import QRDot from "./QRDot";
 import QRCornerSquare from "./QRCornerSquare";
 import QRCornerDot from "./QRCornerDot";
-import type { RequiredOptions, Gradient } from "./QROptions";
+import type { RequiredOptions, Gradient, GS1Options } from "./QROptions";
 import gradientTypes from "../constants/gradientTypes";
 import type { FilterFunction, QRCode } from "../types";
 
@@ -66,10 +66,40 @@ export default class QRCanvas {
     }
   }
 
+  private _calculateGS1DrawingParams(count: number): {
+    dotSize: number;
+    xBeginning: number;
+    yBeginning: number;
+    quietZonePixels: number;
+  } {
+    const gs1Config = this._options.gs1Options as GS1Options;
+
+    if (!gs1Config?.enabled) {
+      // Fallback to original calculation
+      const minSize = Math.min(this._options.width, this._options.height) - this._options.margin * 2;
+      const dotSize = Math.floor(minSize / count);
+      const xBeginning = Math.floor((this._options.width - count * dotSize) / 2);
+      const yBeginning = Math.floor((this._options.height - count * dotSize) / 2);
+
+      return { dotSize, xBeginning, yBeginning, quietZonePixels: 0 };
+    }
+
+    // GS1 calculation
+    const totalModules = count + gs1Config.quietZone * 2;
+    const modulePixelSize = this._canvas.width / totalModules;
+    const quietZonePixels = modulePixelSize * gs1Config.quietZone;
+
+    return {
+      dotSize: Math.floor(modulePixelSize),
+      xBeginning: Math.floor(quietZonePixels),
+      yBeginning: Math.floor(quietZonePixels),
+      quietZonePixels
+    };
+  }
+
   async drawQR(qr: QRCode): Promise<void> {
     const count = qr.getModuleCount();
-    const minSize = Math.min(this._options.width, this._options.height) - this._options.margin * 2;
-    const dotSize = Math.floor(minSize / count);
+    const drawingParams = this._calculateGS1DrawingParams(count);
     let drawImageSize = {
       hideXDots: 0,
       hideYDots: 0,
@@ -91,7 +121,7 @@ export default class QRCanvas {
         originalHeight: this._image.height,
         maxHiddenDots,
         maxHiddenAxisDots: count - 14,
-        dotSize
+        dotSize: drawingParams.dotSize
       });
     }
 
@@ -122,7 +152,12 @@ export default class QRCanvas {
     this.drawCorners();
 
     if (this._options.image) {
-      this.drawImage({ width: drawImageSize.width, height: drawImageSize.height, count, dotSize });
+      this.drawImage({
+        width: drawImageSize.width,
+        height: drawImageSize.height,
+        count,
+        dotSize: drawingParams.dotSize
+      });
     }
   }
 
@@ -172,10 +207,8 @@ export default class QRCanvas {
       throw "The canvas is too small.";
     }
 
-    const minSize = Math.min(options.width, options.height) - options.margin * 2;
-    const dotSize = Math.floor(minSize / count);
-    const xBeginning = Math.floor((options.width - count * dotSize) / 2);
-    const yBeginning = Math.floor((options.height - count * dotSize) / 2);
+    // Use GS1-aware drawing parameters
+    const drawingParams = this._calculateGS1DrawingParams(count);
     const dot = new QRDot({ context: canvasContext, type: options.dotsOptions.type });
 
     canvasContext.beginPath();
@@ -189,9 +222,9 @@ export default class QRCanvas {
           continue;
         }
         dot.draw(
-          xBeginning + i * dotSize,
-          yBeginning + j * dotSize,
-          dotSize,
+          drawingParams.xBeginning + i * drawingParams.dotSize,
+          drawingParams.yBeginning + j * drawingParams.dotSize,
+          drawingParams.dotSize,
           (xOffset: number, yOffset: number): boolean => {
             if (i + xOffset < 0 || j + yOffset < 0 || i + xOffset >= count || j + yOffset >= count) return false;
             if (filter && !filter(i + xOffset, j + yOffset)) return false;
@@ -207,9 +240,9 @@ export default class QRCanvas {
         context: canvasContext,
         options: gradientOptions,
         additionalRotation: 0,
-        x: xBeginning,
-        y: yBeginning,
-        size: count * dotSize
+        x: drawingParams.xBeginning,
+        y: drawingParams.yBeginning,
+        size: count * drawingParams.dotSize
       });
 
       gradientOptions.colorStops.forEach(({ offset, color }: { offset: number; color: string }) => {
@@ -236,14 +269,12 @@ export default class QRCanvas {
     }
 
     const options = this._options;
-
     const count = this._qr.getModuleCount();
-    const minSize = Math.min(options.width, options.height) - options.margin * 2;
-    const dotSize = Math.floor(minSize / count);
-    const cornersSquareSize = dotSize * 7;
-    const cornersDotSize = dotSize * 3;
-    const xBeginning = Math.floor((options.width - count * dotSize) / 2);
-    const yBeginning = Math.floor((options.height - count * dotSize) / 2);
+
+    // Use GS1-aware drawing parameters
+    const drawingParams = this._calculateGS1DrawingParams(count);
+    const cornersSquareSize = drawingParams.dotSize * 7;
+    const cornersDotSize = drawingParams.dotSize * 3;
 
     [
       [0, 0, 0],
@@ -254,8 +285,8 @@ export default class QRCanvas {
         return;
       }
 
-      const x = xBeginning + column * dotSize * (count - 7);
-      const y = yBeginning + row * dotSize * (count - 7);
+      const x = drawingParams.xBeginning + column * drawingParams.dotSize * (count - 7);
+      const y = drawingParams.yBeginning + row * drawingParams.dotSize * (count - 7);
 
       if (options.cornersSquareOptions?.type) {
         const cornersSquare = new QRCornerSquare({ context: canvasContext, type: options.cornersSquareOptions?.type });
@@ -274,9 +305,9 @@ export default class QRCanvas {
             }
 
             dot.draw(
-              x + i * dotSize,
-              y + j * dotSize,
-              dotSize,
+              x + i * drawingParams.dotSize,
+              y + j * drawingParams.dotSize,
+              drawingParams.dotSize,
               (xOffset: number, yOffset: number): boolean => !!squareMask[i + xOffset]?.[j + yOffset]
             );
           }
@@ -309,7 +340,7 @@ export default class QRCanvas {
         const cornersDot = new QRCornerDot({ context: canvasContext, type: options.cornersDotOptions?.type });
 
         canvasContext.beginPath();
-        cornersDot.draw(x + dotSize * 2, y + dotSize * 2, cornersDotSize, rotation);
+        cornersDot.draw(x + drawingParams.dotSize * 2, y + drawingParams.dotSize * 2, cornersDotSize, rotation);
       } else {
         const dot = new QRDot({ context: canvasContext, type: options.dotsOptions.type });
 
@@ -322,9 +353,9 @@ export default class QRCanvas {
             }
 
             dot.draw(
-              x + i * dotSize,
-              y + j * dotSize,
-              dotSize,
+              x + i * drawingParams.dotSize,
+              y + j * drawingParams.dotSize,
+              drawingParams.dotSize,
               (xOffset: number, yOffset: number): boolean => !!dotMask[i + xOffset]?.[j + yOffset]
             );
           }
@@ -337,8 +368,8 @@ export default class QRCanvas {
           context: canvasContext,
           options: gradientOptions,
           additionalRotation: rotation,
-          x: x + dotSize * 2,
-          y: y + dotSize * 2,
+          x: x + drawingParams.dotSize * 2,
+          y: y + drawingParams.dotSize * 2,
           size: cornersDotSize
         });
 
@@ -398,10 +429,10 @@ export default class QRCanvas {
     }
 
     const options = this._options;
-    const xBeginning = Math.floor((options.width - count * dotSize) / 2);
-    const yBeginning = Math.floor((options.height - count * dotSize) / 2);
-    const dx = xBeginning + options.imageOptions.margin + (count * dotSize - width) / 2;
-    const dy = yBeginning + options.imageOptions.margin + (count * dotSize - height) / 2;
+    const drawingParams = this._calculateGS1DrawingParams(count);
+
+    const dx = drawingParams.xBeginning + options.imageOptions.margin + (count * dotSize - width) / 2;
+    const dy = drawingParams.yBeginning + options.imageOptions.margin + (count * dotSize - height) / 2;
     const dw = width - options.imageOptions.margin * 2;
     const dh = height - options.imageOptions.margin * 2;
 
