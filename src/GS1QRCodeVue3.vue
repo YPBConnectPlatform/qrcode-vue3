@@ -68,7 +68,6 @@ defineOptions({
 
 <template>
   <Suspense>
-    {{ props }}
     <GS1QRCodeVue3Async
       v-bind="$attrs"
       :width="props.width"
