@@ -1,154 +1,133 @@
-<script setup lang="ts">
-import { nextTick, defineExpose } from "vue";
-import QRCodeStyling from "./core/QRCodeStyling";
-import type { GS1Options, GS1Dimensions, Options, IQrOptionsType, Gradient } from "./core/QROptions";
-import type { CornerDotType, CornerSquareType, DotType, Extension } from "./types";
-
-export interface GS1Props {
-  width?: number;
-  height?: number;
-  margin?: number;
-  data?: string;
-  image?: string;
-  qrOptions?: IQrOptionsType;
-  imageOptions?: {
-    hideBackgroundDots?: boolean;
-    imageSize?: number;
-    crossOrigin?: string;
-    margin?: number;
-  };
-  dotsOptions?: {
-    type?: DotType;
-    color?: string;
-    gradient?: Gradient;
-  };
-  backgroundOptions?: {
-    color?: string;
-    gradient?: any;
-  };
-  cornersSquareOptions?: {
-    type?: CornerSquareType;
-    color?: string;
-    gradient?: Gradient;
-  };
-  cornersDotOptions?: {
-    type?: CornerDotType;
-    color?: string;
-    gradient?: Gradient;
-  };
-  download?: boolean;
-  myclass?: string;
-  imgclass?: string;
-  downloadButton: string;
-  downloadWithIcon: boolean;
-  downloadOptions?: {
-    name?: string;
-    extension?: Extension;
-  };
-  isDownloadBtnDisabled: boolean;
-  buttonName: string;
-  dataIdText?: string;
-  gs1Options?: Partial<GS1Options>;
-  showGs1Info?: boolean;
-  gs1InfoClass?: string;
-}
-
-const props = withDefaults(defineProps<GS1Props>(), {
-  width: 300,
-  height: 300,
-  margin: 0,
-  data: "",
-  image: "",
-  download: false,
-  myclass: "",
-  imgclass: "",
-  downloadButton: "",
-  buttonName: "Download",
-  downloadOptions: () => ({ name: "qr-code", extension: "png" }),
-  showGs1Info: false,
-  gs1InfoClass: "gs1-info-default",
-  gs1Options: () => ({
-    enabled: false,
-    moduleSize: 0.396,
-    printDPI: 300,
-    quietZone: 4,
-    enforceUppercase: true,
-    enforceMinimumSize: true
-  })
-});
-
-let qrCodeStyling: QRCodeStyling | undefined;
-let gs1Dimensions: GS1Dimensions | null = null;
-
-const qrOptions: Partial<Options> = {
-  width: props.width,
-  height: props.height,
-  margin: props.margin,
-  data: props.data,
-  image: props.image,
-  qrOptions: props.qrOptions,
-  imageOptions: props.imageOptions,
-  dotsOptions: props.dotsOptions,
-  backgroundOptions: props.backgroundOptions,
-  cornersSquareOptions: props.cornersSquareOptions,
-  cornersDotOptions: props.cornersDotOptions,
-  gs1Options: props.gs1Options
-};
-
-const updateQRCode = async () => {
-  if (qrCodeStyling) {
-    qrCodeStyling.update(qrOptions);
-
-    if (props.gs1Options?.enabled) {
-      await nextTick();
-      gs1Dimensions = qrCodeStyling.getGS1Dimensions();
-    }
-  }
-};
-
-const onDownloadClick = () => {
-  if (qrCodeStyling && props.download) {
-    qrCodeStyling.download(props.downloadOptions);
-  }
-};
-
-const canvas = document.getElementById("gs1-canvas") as HTMLCanvasElement | null;
-
-if (canvas) {
-  qrCodeStyling = new QRCodeStyling(qrOptions);
-  qrCodeStyling.append(canvas.parentElement || undefined);
-
-  if (props.gs1Options?.enabled) {
-    await nextTick();
-    gs1Dimensions = qrCodeStyling.getGS1Dimensions();
-  }
-}
-
-defineExpose({
-  download: onDownloadClick,
-  getGS1Dimensions: () => gs1Dimensions,
-  updateQRCode
-});
-</script>
-
 <template>
   <div :class="myclass">
-    <canvas id="gs1-canvas" :class="imgclass"></canvas>
+    <div :id="canvasId" :class="imgclass"></div>
 
-    <div v-if="showGs1Info && gs1Dimensions" class="gs1-info" :class="gs1InfoClass">
+    <!-- GS1 Information Display -->
+    <div v-if="showGs1Info && hasGS1Info" class="gs1-info" :class="gs1InfoClass">
       <h4>GS1 Compliant QR Code</h4>
-      <p>Module Size: {{ gs1Options.moduleSize }}mm</p>
-      <p>Physical Size: {{ gs1Dimensions.widthInMM.toFixed(2) }}mm × {{ gs1Dimensions.heightInMM.toFixed(2) }}mm</p>
-      <p>Module Count: {{ gs1Dimensions.moduleCount }}</p>
-      <p>Total Modules: {{ gs1Dimensions.totalModules }} (including quiet zone)</p>
-      <p>Print DPI: {{ gs1Options.printDPI }}</p>
+      <p>Module Size: {{ gs1Info.moduleSize }}mm</p>
+      <p>Physical Size: {{ gs1Info.widthInMM.toFixed(2) }}mm × {{ gs1Info.heightInMM.toFixed(2) }}mm</p>
+      <p>Module Count: {{ gs1Info.moduleCount }}</p>
+      <p>Total Modules: {{ gs1Info.totalModules }} (including quiet zone)</p>
+      <p>Print DPI: {{ gs1Info.printDPI }}</p>
     </div>
 
-    <button v-if="download" :class="downloadButton" @click="onDownloadClick">
+    <button v-if="download" :class="downloadButton" @click="onDownloadClick" :disabled="isDownloadBtnDisabled">
+      <span v-if="downloadWithIcon">📥 </span>
       {{ buttonName }}
     </button>
   </div>
 </template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+import QRCodeStyling from "./core/QRCodeStyling";
+import { GS1Dimensions } from "./core/QROptions";
+
+export default defineComponent({
+  name: "QRCodeComponent",
+  props: {
+    width: { type: Number, default: 300 },
+    height: { type: Number, default: 300 },
+    margin: { type: Number, default: 0 },
+    data: { type: String, default: "" },
+    value: { type: String, default: "" },
+    image: String,
+    qrOptions: Object,
+    imageOptions: Object,
+    dotsOptions: Object,
+    backgroundOptions: Object,
+    cornersSquareOptions: Object,
+    cornersDotOptions: Object,
+    download: { type: Boolean, default: false },
+    myclass: String,
+    imgclass: String,
+    downloadButton: String,
+    downloadOptions: Object,
+    buttonName: { type: String, default: "Download QR Code" },
+    downloadWithIcon: { type: Boolean, default: true },
+    isDownloadBtnDisabled: { type: Boolean, default: false },
+    gs1Options: Object,
+    showGs1Info: { type: Boolean, default: false },
+    gs1InfoClass: { type: String, default: "gs1-info-default" }
+  },
+  data() {
+    return {
+      qrCode: null as QRCodeStyling | null,
+      gs1Info: {} as GS1Dimensions & { moduleSize: number; printDPI: number },
+      hasGS1Info: false,
+      canvasId: "qr-code-canvas-" + Math.random().toString(36).substring(2, 10)
+    };
+  },
+  mounted() {
+    this.initQRCode();
+  },
+  methods: {
+    async initQRCode() {
+      const container = document.getElementById(this.canvasId);
+      if (!container) return;
+
+      const qrData = this.value || this.data;
+      if (!qrData) return;
+
+      const mergedGS1Options = {
+        enabled: false,
+        moduleSize: 0.396,
+        printDPI: 300,
+        quietZone: 4,
+        enforceUppercase: true,
+        enforceMinimumSize: true,
+        ...this.gs1Options
+      };
+
+      const options = {
+        width: this.width,
+        height: this.height,
+        margin: this.margin,
+        data: qrData,
+        image: this.image,
+        qrOptions: this.qrOptions || {
+          typeNumber: 0,
+          mode: "Byte",
+          errorCorrectionLevel: "M"
+        },
+        imageOptions: this.imageOptions,
+        dotsOptions: this.dotsOptions,
+        backgroundOptions: this.backgroundOptions,
+        cornersSquareOptions: this.cornersSquareOptions,
+        cornersDotOptions: this.cornersDotOptions,
+        gs1Options: mergedGS1Options
+      };
+
+      try {
+        this.qrCode = new QRCodeStyling(options);
+        this.qrCode.append(container);
+
+        if (mergedGS1Options.enabled) {
+          setTimeout(() => {
+            const dims = this.qrCode?.getGS1Dimensions?.();
+            if (dims) {
+              this.gs1Info = {
+                ...dims,
+                moduleSize: mergedGS1Options.moduleSize,
+                printDPI: mergedGS1Options.printDPI
+              };
+              this.hasGS1Info = true;
+            }
+          }, 50);
+        }
+      } catch (e) {
+        console.error("QR Code init error:", e);
+      }
+    },
+    onDownloadClick() {
+      if (this.qrCode && this.download) {
+        this.qrCode.download(this.downloadOptions || { name: "qr-code", extension: "png" });
+      }
+    }
+  }
+});
+</script>
 
 <style scoped>
 .gs1-info-default {
