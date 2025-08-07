@@ -84,20 +84,31 @@ if (props.gs1Mode) {
   const X_DIM_MM = props.gs1XDimension || 0.396;
   const DPI = props.gs1Dpi || 300;
   const MM_TO_INCH = 1 / 25.4;
-  // Use only uppercase alphanumeric for smallest code
-  const data = (props.value || "").toUpperCase();
+
+  // GS1 data handling: strip parentheses, validate GTIN
+  let data = (props.value || "").replace(/[()]/g, "").toUpperCase();
+  // GS1 Application Identifier for GTIN is 01, so data should start with 01
+  // GTIN is 12, 13, or 14 digits (including leading zeros)
+  const gtinMatch = data.match(/^01(\d{12,14})/);
+  if (!gtinMatch) {
+    console.warn("GS1 QR: Data must start with (01) and contain a valid 12-14 digit GTIN. Example: (01)12345678901231");
+    data = ""; // Prevent QR code generation
+  }
+
   let moduleCount = 29;
   try {
-    const tempQR = new QRCodeStyling({
-      data,
-      qrOptions: {
-        typeNumber: 3, // or 0 for auto
-        mode: "Alphanumeric",
-        errorCorrectionLevel: "M"
+    if (data) {
+      const tempQR = new QRCodeStyling({
+        data,
+        qrOptions: {
+          typeNumber: 3, // or 0 for auto
+          mode: "Alphanumeric",
+          errorCorrectionLevel: "M"
+        }
+      });
+      if (tempQR._qr && typeof tempQR._qr.getModuleCount === "function") {
+        moduleCount = tempQR._qr.getModuleCount();
       }
-    });
-    if (tempQR._qr && typeof tempQR._qr.getModuleCount === "function") {
-      moduleCount = tempQR._qr.getModuleCount();
     }
   } catch (e) {
     console.warn("GS1 tempQR error", e);
