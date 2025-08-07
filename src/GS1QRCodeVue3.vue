@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useAttrs } from "vue";
 import GS1QRCodeVue3Async, { GS1Props } from "./GS1QRCodeVue3Async.vue";
 
 const props = withDefaults(defineProps<GS1Props>(), {
