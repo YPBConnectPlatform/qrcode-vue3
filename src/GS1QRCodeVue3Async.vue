@@ -1,20 +1,16 @@
 <script setup lang="ts">
-import { onMounted, watch, nextTick, computed, defineExpose, ComputedRef } from "vue";
+import { nextTick, defineExpose } from "vue";
 import QRCodeStyling from "./core/QRCodeStyling";
-import type { Options, GS1Options, GS1Dimensions } from "./core/QROptions";
-import type { Extension } from "./types";
+import type { GS1Options, GS1Dimensions, Options, IQrOptionsType, Gradient } from "./core/QROptions";
+import type { CornerDotType, CornerSquareType, DotType, Extension } from "./types";
 
-interface Props {
+export interface GS1Props {
   width?: number;
   height?: number;
   margin?: number;
   data?: string;
   image?: string;
-  qrOptions?: {
-    typeNumber?: number;
-    mode?: string;
-    errorCorrectionLevel?: "L" | "M" | "Q" | "H";
-  };
+  qrOptions?: IQrOptionsType;
   imageOptions?: {
     hideBackgroundDots?: boolean;
     imageSize?: number;
@@ -22,23 +18,23 @@ interface Props {
     margin?: number;
   };
   dotsOptions?: {
-    type?: string;
+    type?: DotType;
     color?: string;
-    gradient?: any;
+    gradient?: Gradient;
   };
   backgroundOptions?: {
     color?: string;
     gradient?: any;
   };
   cornersSquareOptions?: {
-    type?: string;
+    type?: CornerSquareType;
     color?: string;
-    gradient?: any;
+    gradient?: Gradient;
   };
   cornersDotOptions?: {
-    type?: string;
+    type?: CornerDotType;
     color?: string;
-    gradient?: any;
+    gradient?: Gradient;
   };
   download?: boolean;
   myclass?: string;
@@ -57,7 +53,7 @@ interface Props {
   gs1InfoClass?: string;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<GS1Props>(), {
   width: 300,
   height: 300,
   margin: 0,
@@ -84,7 +80,7 @@ const props = withDefaults(defineProps<Props>(), {
 let qrCodeStyling: QRCodeStyling | undefined;
 let gs1Dimensions: GS1Dimensions | null = null;
 
-const qrOptions = computed(() => ({
+const qrOptions: Partial<Options> = {
   width: props.width,
   height: props.height,
   margin: props.margin,
@@ -97,11 +93,11 @@ const qrOptions = computed(() => ({
   cornersSquareOptions: props.cornersSquareOptions,
   cornersDotOptions: props.cornersDotOptions,
   gs1Options: props.gs1Options
-})) as ComputedRef<Partial<Options>>;
+};
 
 const updateQRCode = async () => {
   if (qrCodeStyling) {
-    qrCodeStyling.update(qrOptions.value);
+    qrCodeStyling.update(qrOptions);
 
     if (props.gs1Options?.enabled) {
       await nextTick();
@@ -116,21 +112,17 @@ const onDownloadClick = () => {
   }
 };
 
-onMounted(async () => {
-  const canvas = document.getElementById("gs1-canvas") as HTMLCanvasElement | null;
+const canvas = document.getElementById("gs1-canvas") as HTMLCanvasElement | null;
 
-  if (canvas) {
-    qrCodeStyling = new QRCodeStyling(qrOptions.value);
-    qrCodeStyling.append(canvas.parentElement || undefined);
+if (canvas) {
+  qrCodeStyling = new QRCodeStyling(qrOptions);
+  qrCodeStyling.append(canvas.parentElement || undefined);
 
-    if (props.gs1Options?.enabled) {
-      await nextTick();
-      gs1Dimensions = qrCodeStyling.getGS1Dimensions();
-    }
+  if (props.gs1Options?.enabled) {
+    await nextTick();
+    gs1Dimensions = qrCodeStyling.getGS1Dimensions();
   }
-});
-
-watch(() => qrOptions.value, updateQRCode, { deep: true });
+}
 
 defineExpose({
   download: onDownloadClick,
