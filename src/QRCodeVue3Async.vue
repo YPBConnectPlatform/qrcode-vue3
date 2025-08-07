@@ -147,6 +147,7 @@ if (props.gs1Mode) {
 const qrCode = new QRCodeStyling(qrCodeOptions);
 
 let imageUrl = await qrCode.getImageUrl(props.fileExt);
+console.log("GS1 imageUrl", imageUrl);
 
 function onDownloadClick() {
   qrCode.download(props.downloadOptions);
