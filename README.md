@@ -104,6 +104,30 @@ export default {
 </script>
 ```
 
+## GS1 QR Code Mode
+
+This library supports generating GS1-compliant QR codes for retail and packaging applications. GS1 mode enforces:
+
+- Fixed X-dimension (module size) in millimeters (default: 0.396mm, GS1 minimum)
+- Fixed quiet zone (4 modules on each side)
+- No logo/image or custom styling
+- Alphanumeric mode, error correction level M, QR version 3 (29x29 modules) by default
+- Output size in pixels is calculated as: `(moduleCount + 8) * X-dimension (mm) * DPI / 25.4`
+
+### Props for GS1 mode
+
+- `gs1Mode` (boolean): Enable GS1-compliant QR code (default: false)
+- `gs1Dpi` (number): DPI for GS1 mode (default: 300)
+- `gs1XDimension` (number): X-dimension in mm (default: 0.396)
+
+### Example Usage
+
+```html
+<QRCodeVue3 value="(01)12345678901231" :gs1Mode="true" :gs1Dpi="300" :gs1XDimension="0.396" />
+```
+
+When `gs1Mode` is true, all other styling/image props are ignored and the output is always GS1-compliant.
+
 ## API Documentation
 
 ### VQRCodeStyling instance

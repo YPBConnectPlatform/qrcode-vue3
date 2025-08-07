@@ -27,6 +27,9 @@ export interface Props {
   isDownloadBtnDisabled: boolean;
   previewImage: any;
   dataIdText?: string;
+  gs1Mode: boolean;
+  gs1Dpi: number;
+  gs1XDimension: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -69,22 +72,68 @@ const props = withDefaults(defineProps<Props>(), {
   previewImage: {
     width: 300,
     height: 300
-  }
+  },
+  gs1Mode: false,
+  gs1Dpi: 300,
+  gs1XDimension: 0.396
 });
 
-const qrCode = new QRCodeStyling({
-  data: props.value,
-  width: props.width,
-  height: props.height,
-  margin: props.margin,
-  qrOptions: props.qrOptions,
-  imageOptions: props.imageOptions,
-  dotsOptions: props.dotsOptions,
-  backgroundOptions: props.backgroundOptions,
-  image: props.image,
-  cornersSquareOptions: props.cornersSquareOptions,
-  cornersDotOptions: props.cornersDotOptions
-});
+let qrCodeOptions;
+if (props.gs1Mode) {
+  // GS1 fixed settings
+  const X_DIM_MM = props.gs1XDimension;
+  const DPI = props.gs1Dpi;
+  const MM_TO_INCH = 1 / 25.4;
+  // Use only uppercase alphanumeric for smallest code
+  const data = props.value.toUpperCase();
+  // Use QR version 3 (29x29 modules) as GS1 example, or autodetect for data length
+  const tempQR = new QRCodeStyling({
+    data,
+    qrOptions: {
+      typeNumber: 3, // or 0 for auto
+      mode: "Alphanumeric",
+      errorCorrectionLevel: "M"
+    }
+  });
+  const moduleCount = tempQR._qr ? tempQR._qr.getModuleCount() : 29;
+  const quietZoneModules = 4; // 4 modules each side
+  const totalModules = moduleCount + 2 * quietZoneModules;
+  const xDimPx = X_DIM_MM * MM_TO_INCH * DPI;
+  const sizePx = Math.round(totalModules * xDimPx);
+  qrCodeOptions = {
+    data,
+    width: sizePx,
+    height: sizePx,
+    margin: quietZoneModules * xDimPx,
+    qrOptions: {
+      typeNumber: 3, // or 0 for auto
+      mode: "Alphanumeric",
+      errorCorrectionLevel: "M"
+    },
+    // for GS1 only: no image, no custom styling
+    image: "",
+    imageOptions: { hideBackgroundDots: true, imageSize: 0, margin: 0 },
+    dotsOptions: { type: "square", color: "#000" },
+    backgroundOptions: { color: "#fff" },
+    cornersSquareOptions: { type: "square", color: "#000" },
+    cornersDotOptions: { type: undefined, color: "#000" }
+  };
+} else {
+  qrCodeOptions = {
+    data: props.value,
+    width: props.width,
+    height: props.height,
+    margin: props.margin,
+    qrOptions: props.qrOptions,
+    imageOptions: props.imageOptions,
+    dotsOptions: props.dotsOptions,
+    backgroundOptions: props.backgroundOptions,
+    image: props.image,
+    cornersSquareOptions: props.cornersSquareOptions,
+    cornersDotOptions: props.cornersDotOptions
+  };
+}
+const qrCode = new QRCodeStyling(qrCodeOptions);
 
 let imageUrl = await qrCode.getImageUrl(props.fileExt);
 

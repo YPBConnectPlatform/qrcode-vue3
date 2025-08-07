@@ -26,6 +26,9 @@ export interface Props {
   isDownloadBtnDisabled: boolean;
   previewImage: any;
   dataIdText?: string;
+  gs1Mode: boolean;
+  gs1Dpi: number;
+  gs1XDimension: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -68,7 +71,10 @@ const props = withDefaults(defineProps<Props>(), {
   previewImage: {
     width: 300,
     height: 300
-  }
+  },
+  gs1Mode: false,
+  gs1Dpi: 300,
+  gs1XDimension: 0.396
 });
 </script>
 
@@ -93,6 +99,9 @@ const props = withDefaults(defineProps<Props>(), {
       :margin="props.margin"
       :value="props.value"
       :myclass="props.myclass"
+      :gs1-mode="props.gs1Mode"
+      :gs1-dpi="props.gs1Dpi"
+      :gs1-x-dimension="props.gs1XDimension"
       :qr-options="props.qrOptions"
       :width="props.width"
       :is-download-btn-disabled="props.isDownloadBtnDisabled"
