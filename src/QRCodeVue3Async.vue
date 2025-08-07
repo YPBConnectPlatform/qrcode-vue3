@@ -85,14 +85,34 @@ if (props.gs1Mode) {
   const DPI = props.gs1Dpi || 300;
   const MM_TO_INCH = 1 / 25.4;
 
-  // GS1 data handling: strip parentheses, validate GTIN
+  // GS1 data handling: support both traditional GTIN and GS1 Digital Link URLs
   let data = (props.value || "").replace(/[()]/g, "").toUpperCase();
-  // GS1 Application Identifier for GTIN is 01, so data should start with 01
-  // GTIN is 12, 13, or 14 digits (including leading zeros)
-  const gtinMatch = data.match(/^01(\d{12,14})/);
-  if (!gtinMatch) {
-    console.warn("GS1 QR: Data must start with (01) and contain a valid 12-14 digit GTIN. Example: (01)12345678901231");
-    data = ""; // Prevent QR code generation
+
+  // Check if it's a URL (contains http/https)
+  const isUrl = /^https?:\/\//i.test(props.value);
+
+  // Check for GS1 Digital Link format (URLs containing /01/GTIN pattern)
+  const isGs1DigitalLink = /^https?:\/\//i.test(props.value) && /\/01\/\d{12,14}/.test(props.value);
+
+  if (isGs1DigitalLink) {
+    // Valid GS1 Digital Link
+    data = props.value;
+    console.log("GS1 Digital Link detected:", data);
+  } else if (isUrl) {
+    // URL but not GS1 Digital Link format
+    console.warn(
+      "GS1 QR: URL must contain /01/GTIN pattern for GS1 Digital Link. Example: https://s.cqr.to/01/01234567890123/21/HXjvPu"
+    );
+    data = "";
+  } else {
+    // Validate traditional GS1 GTIN format for non-URL data
+    const gtinMatch = data.match(/^01(\d{12,14})/);
+    if (!gtinMatch) {
+      console.warn(
+        "GS1 QR: Data must be a valid GS1 Digital Link URL or start with (01) and contain a valid 12-14 digit GTIN. Examples: https://s.cqr.to/01/01234567890123/21/HXjvPu or (01)12345678901231"
+      );
+      data = ""; // Prevent QR code generation
+    }
   }
 
   let moduleCount = 29;
@@ -102,7 +122,7 @@ if (props.gs1Mode) {
         data,
         qrOptions: {
           typeNumber: 3, // or 0 for auto
-          mode: "Alphanumeric",
+          mode: isUrl ? "Byte" : "Alphanumeric", // Use Byte for URLs, Alphanumeric for GTIN
           errorCorrectionLevel: "M"
         }
       });
@@ -128,7 +148,7 @@ if (props.gs1Mode) {
     margin: marginPx,
     qrOptions: {
       typeNumber: 3, // or 0 for auto
-      mode: "Alphanumeric",
+      mode: isUrl ? "Byte" : "Alphanumeric", // Use Byte for URLs, Alphanumeric for GTIN
       errorCorrectionLevel: "M"
     },
     // GS1: no image, no custom styling
@@ -139,7 +159,6 @@ if (props.gs1Mode) {
     cornersSquareOptions: { type: "square", color: "#000" },
     cornersDotOptions: { type: undefined, color: "#000" }
   };
-  console.log("GS1 qrCodeOptions", qrCodeOptions);
 } else {
   qrCodeOptions = {
     data: props.value,
@@ -158,7 +177,6 @@ if (props.gs1Mode) {
 const qrCode = new QRCodeStyling(qrCodeOptions);
 
 let imageUrl = await qrCode.getImageUrl(props.fileExt);
-console.log("GS1 imageUrl", imageUrl);
 
 function onDownloadClick() {
   qrCode.download(props.downloadOptions);

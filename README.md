@@ -111,7 +111,8 @@ This library supports generating GS1-compliant QR codes for retail and packaging
 - Fixed X-dimension (module size) in millimeters (default: 0.396mm, GS1 minimum)
 - Fixed quiet zone (4 modules on each side)
 - No logo/image or custom styling
-- Alphanumeric mode, error correction level M, QR version 3 (29x29 modules) by default
+- Alphanumeric mode for GTIN data, Byte mode for URLs
+- Error correction level M, QR version 3 (29x29 modules) by default
 - Output size in pixels is calculated as: `(moduleCount + 8) * X-dimension (mm) * DPI / 25.4`
 
 ### Props for GS1 mode
@@ -120,11 +121,33 @@ This library supports generating GS1-compliant QR codes for retail and packaging
 - `gs1Dpi` (number): DPI for GS1 mode (default: 300)
 - `gs1XDimension` (number): X-dimension in mm (default: 0.396)
 
-### Example Usage
+### Supported GS1 Data Formats
+
+#### 1. Traditional GS1 GTIN Format
 
 ```html
 <QRCodeVue3 value="(01)12345678901231" :gs1Mode="true" :gs1Dpi="300" :gs1XDimension="0.396" />
 ```
+
+- **Format**: `(01)GTIN` where GTIN is 12-14 digits
+- **Example**: `(01)12345678901231`
+- **Encoding**: Alphanumeric mode for maximum efficiency
+
+#### 2. GS1 Digital Link URLs
+
+```html
+<QRCodeVue3 value="https://s.cqr.to/01/01234567890123/21/HXjvPu" :gs1Mode="true" :gs1Dpi="300" :gs1XDimension="0.396" />
+```
+
+- **Format**: URLs containing `/01/GTIN` pattern
+- **Example**: `https://s.cqr.to/01/01234567890123/21/HXjvPu`
+- **Encoding**: Byte mode to support URL characters
+
+### Validation Rules
+
+- **Traditional GTIN**: Must start with `(01)` followed by 12-14 digit GTIN
+- **GS1 Digital Link**: Must be a valid URL containing `/01/GTIN` pattern
+- **Invalid data**: Will log a warning and not generate QR code
 
 When `gs1Mode` is true, all other styling/image props are ignored and the output is always GS1-compliant.
 
