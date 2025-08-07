@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+//import { computed, reactive, ref, watch } from "vue";
 import QRCodeStyling from "./core/QRCodeStyling";
 import { DrawType } from "./types";
 
@@ -26,7 +27,6 @@ export interface Props {
   isDownloadBtnDisabled: boolean;
   previewImage: any;
   dataIdText?: string;
-  isGs1QR?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -69,30 +69,15 @@ const props = withDefaults(defineProps<Props>(), {
   previewImage: {
     width: 300,
     height: 300
-  },
-  isGs1QR: false
+  }
 });
 
-const DPI = 300;
-const targetMm = 0.495;
-const pxPerModule = Math.round((targetMm * DPI) / 25.4); // ≈6 px
-const version = 3;
-const moduleCount = 4 * version + 17;
-const quietZoneModules = 4;
-const quietZonePx = pxPerModule * quietZoneModules;
-const canvasSize = moduleCount * pxPerModule + 2 * quietZonePx;
-
 const qrCode = new QRCodeStyling({
-  width: props.isGs1QR ? canvasSize : props.width,
-  height: props.isGs1QR ? canvasSize : props.height,
   data: props.value,
-  margin: props.isGs1QR ? quietZonePx : props.margin,
-  qrOptions: props.isGs1QR
-    ? {
-        typeNumber: version,
-        errorCorrectionLevel: "M"
-      }
-    : props.qrOptions,
+  width: props.width,
+  height: props.height,
+  margin: props.margin,
+  qrOptions: props.qrOptions,
   imageOptions: props.imageOptions,
   dotsOptions: props.dotsOptions,
   backgroundOptions: props.backgroundOptions,
@@ -137,14 +122,16 @@ defineExpose({ onDownloadClick });
         :disabled="isDownloadBtnDisabled"
         :data-id="dataIdText"
       >
-        <span class="v-btn__overlay"></span><span class="v-btn__underlay"></span>
-        <span class="v-btn__prepend">
-          <i class="mdi-download mdi v-icon notranslate v-theme--light v-icon--size-default" aria-hidden="true"></i>
-        </span>
-        <span class="v-btn__content" data-no-activator>
-          <span>{{ buttonName }}</span>
-        </span>
-        <span class="v-btn__append"></span>
+        <span class="v-btn__overlay"></span><span class="v-btn__underlay"></span
+        ><span class="v-btn__prepend"
+          ><i
+            class="mdi-download mdi v-icon notranslate v-theme--light v-icon--size-default"
+            aria-hidden="true"
+          ></i></span
+        ><span class="v-btn__content" data-no-activator=""
+          ><!--v-if--><span>{{ buttonName }}</span></span
+        ><span class="v-btn__append"></span
+        ><!---->
       </button>
     </div>
   </div>

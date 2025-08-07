@@ -26,7 +26,6 @@ export interface Props {
   isDownloadBtnDisabled: boolean;
   previewImage: any;
   dataIdText?: string;
-  isGs1QR?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -69,8 +68,7 @@ const props = withDefaults(defineProps<Props>(), {
   previewImage: {
     width: 300,
     height: 300
-  },
-  isGs1QR: false
+  }
 });
 </script>
 
@@ -100,7 +98,6 @@ const props = withDefaults(defineProps<Props>(), {
       :is-download-btn-disabled="props.isDownloadBtnDisabled"
       :preview-image="previewImage"
       :data-id-text="dataIdText"
-      :is-gs1-q-r="isGs1QR"
     />
   </Suspense>
 </template>
