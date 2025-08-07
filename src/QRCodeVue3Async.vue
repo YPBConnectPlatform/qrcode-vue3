@@ -81,36 +81,46 @@ const props = withDefaults(defineProps<Props>(), {
 let qrCodeOptions;
 if (props.gs1Mode) {
   // GS1 fixed settings
-  const X_DIM_MM = props.gs1XDimension;
-  const DPI = props.gs1Dpi;
+  const X_DIM_MM = props.gs1XDimension || 0.396;
+  const DPI = props.gs1Dpi || 300;
   const MM_TO_INCH = 1 / 25.4;
   // Use only uppercase alphanumeric for smallest code
-  const data = props.value.toUpperCase();
-  // Use QR version 3 (29x29 modules) as GS1 example, or autodetect for data length
-  const tempQR = new QRCodeStyling({
-    data,
-    qrOptions: {
-      typeNumber: 3, // or 0 for auto
-      mode: "Alphanumeric",
-      errorCorrectionLevel: "M"
+  const data = (props.value || "").toUpperCase();
+  let moduleCount = 29;
+  try {
+    const tempQR = new QRCodeStyling({
+      data,
+      qrOptions: {
+        typeNumber: 3, // or 0 for auto
+        mode: "Alphanumeric",
+        errorCorrectionLevel: "M"
+      }
+    });
+    if (tempQR._qr && typeof tempQR._qr.getModuleCount === "function") {
+      moduleCount = tempQR._qr.getModuleCount();
     }
-  });
-  const moduleCount = tempQR._qr ? tempQR._qr.getModuleCount() : 29;
+  } catch (e) {
+    console.warn("GS1 tempQR error", e);
+  }
   const quietZoneModules = 4; // 4 modules each side
   const totalModules = moduleCount + 2 * quietZoneModules;
   const xDimPx = X_DIM_MM * MM_TO_INCH * DPI;
-  const sizePx = Math.round(totalModules * xDimPx);
+  let sizePx = Math.round(totalModules * xDimPx);
+  let marginPx = quietZoneModules * xDimPx;
+  // Fallback to safe values if calculation fails
+  if (!sizePx || isNaN(sizePx) || sizePx < 40) sizePx = 200;
+  if (!marginPx || isNaN(marginPx) || marginPx < 0) marginPx = 20;
   qrCodeOptions = {
     data,
     width: sizePx,
     height: sizePx,
-    margin: quietZoneModules * xDimPx,
+    margin: marginPx,
     qrOptions: {
       typeNumber: 3, // or 0 for auto
       mode: "Alphanumeric",
       errorCorrectionLevel: "M"
     },
-    // for GS1 only: no image, no custom styling
+    // GS1: no image, no custom styling
     image: "",
     imageOptions: { hideBackgroundDots: true, imageSize: 0, margin: 0 },
     dotsOptions: { type: "square", color: "#000" },
@@ -118,6 +128,7 @@ if (props.gs1Mode) {
     cornersSquareOptions: { type: "square", color: "#000" },
     cornersDotOptions: { type: undefined, color: "#000" }
   };
+  console.log("GS1 qrCodeOptions", qrCodeOptions);
 } else {
   qrCodeOptions = {
     data: props.value,
