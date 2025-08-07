@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, nextTick, ComputedRef } from "vue";
+import { onMounted, watch, nextTick, computed, defineExpose, ComputedRef } from "vue";
 import QRCodeStyling from "./core/QRCodeStyling";
 import type { Options, GS1Options, GS1Dimensions } from "./core/QROptions";
 import type { Extension } from "./types";
@@ -52,7 +52,6 @@ interface Props {
   isDownloadBtnDisabled: boolean;
   buttonName: string;
   dataIdText?: string;
-  // GS1-specific
   gs1Options?: Partial<GS1Options>;
   showGs1Info?: boolean;
   gs1InfoClass?: string;
@@ -82,9 +81,8 @@ const props = withDefaults(defineProps<Props>(), {
   })
 });
 
-const canvas = ref<HTMLCanvasElement>();
-const qrCodeStyling = ref<QRCodeStyling>();
-const gs1Dimensions = ref<GS1Dimensions | null>(null);
+let qrCodeStyling: QRCodeStyling | undefined;
+let gs1Dimensions: GS1Dimensions | null = null;
 
 const qrOptions = computed(() => ({
   width: props.width,
@@ -102,30 +100,32 @@ const qrOptions = computed(() => ({
 })) as ComputedRef<Partial<Options>>;
 
 const updateQRCode = async () => {
-  if (qrCodeStyling.value) {
-    qrCodeStyling.value.update(qrOptions.value);
+  if (qrCodeStyling) {
+    qrCodeStyling.update(qrOptions.value);
 
     if (props.gs1Options?.enabled) {
       await nextTick();
-      gs1Dimensions.value = qrCodeStyling.value.getGS1Dimensions();
+      gs1Dimensions = qrCodeStyling.getGS1Dimensions();
     }
   }
 };
 
 const onDownloadClick = () => {
-  if (qrCodeStyling.value && props.download) {
-    qrCodeStyling.value.download(props.downloadOptions);
+  if (qrCodeStyling && props.download) {
+    qrCodeStyling.download(props.downloadOptions);
   }
 };
 
 onMounted(async () => {
-  if (canvas.value) {
-    qrCodeStyling.value = new QRCodeStyling(qrOptions.value);
-    qrCodeStyling.value.append(canvas.value.parentElement || undefined);
+  const canvas = document.getElementById("gs1-canvas") as HTMLCanvasElement | null;
+
+  if (canvas) {
+    qrCodeStyling = new QRCodeStyling(qrOptions.value);
+    qrCodeStyling.append(canvas.parentElement || undefined);
 
     if (props.gs1Options?.enabled) {
       await nextTick();
-      gs1Dimensions.value = qrCodeStyling.value.getGS1Dimensions();
+      gs1Dimensions = qrCodeStyling.getGS1Dimensions();
     }
   }
 });
@@ -134,14 +134,14 @@ watch(() => qrOptions.value, updateQRCode, { deep: true });
 
 defineExpose({
   download: onDownloadClick,
-  getGS1Dimensions: () => gs1Dimensions.value,
+  getGS1Dimensions: () => gs1Dimensions,
   updateQRCode
 });
 </script>
 
 <template>
   <div :class="myclass">
-    <canvas ref="canvas" :class="imgclass"></canvas>
+    <canvas id="gs1-canvas" :class="imgclass"></canvas>
 
     <div v-if="showGs1Info && gs1Dimensions" class="gs1-info" :class="gs1InfoClass">
       <h4>GS1 Compliant QR Code</h4>
@@ -152,7 +152,9 @@ defineExpose({
       <p>Print DPI: {{ gs1Options.printDPI }}</p>
     </div>
 
-    <button v-if="download" :class="downloadButton" @click="onDownloadClick">Download QR Code</button>
+    <button v-if="download" :class="downloadButton" @click="onDownloadClick">
+      {{ buttonName }}
+    </button>
   </div>
 </template>
 
