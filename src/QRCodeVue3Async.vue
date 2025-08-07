@@ -121,7 +121,7 @@ if (props.gs1Mode) {
       const tempQR = new QRCodeStyling({
         data,
         qrOptions: {
-          typeNumber: 3, // or 0 for auto
+          typeNumber: 0, // Auto-detect version instead of forcing version 3
           mode: isUrl ? "Byte" : "Alphanumeric", // Use Byte for URLs, Alphanumeric for GTIN
           errorCorrectionLevel: "M"
         }
@@ -147,7 +147,7 @@ if (props.gs1Mode) {
     height: sizePx,
     margin: marginPx,
     qrOptions: {
-      typeNumber: 3, // or 0 for auto
+      typeNumber: 0, // Auto-detect version instead of forcing version 3
       mode: isUrl ? "Byte" : "Alphanumeric", // Use Byte for URLs, Alphanumeric for GTIN
       errorCorrectionLevel: "M"
     },
