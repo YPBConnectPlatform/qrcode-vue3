@@ -24,26 +24,6 @@ export interface IQrOptionsType {
   mode?: Mode;
   errorCorrectionLevel?: ErrorCorrectionLevel;
 }
-export interface GS1Options {
-  enabled: boolean;
-  moduleSize: number; // in mm (0.396 - 0.990)
-  printDPI: number;
-  quietZone: number; // modules (default 4)
-  enforceUppercase: boolean;
-  enforceMinimumSize: boolean;
-}
-
-export interface GS1Dimensions {
-  widthInPixels: number;
-  heightInPixels: number;
-  widthInMM: number;
-  heightInMM: number;
-  moduleCount: number;
-  totalModules: number;
-  modulePixelSize: number;
-  quietZonePixels: number;
-}
-
 export type Options = {
   width?: number;
   height?: number;
@@ -76,7 +56,6 @@ export type Options = {
     color?: string;
     gradient?: Gradient;
   };
-  gs1Options?: Partial<GS1Options>;
 };
 
 export interface RequiredOptions extends Options {
@@ -107,15 +86,6 @@ export interface RequiredOptions extends Options {
   };
 }
 
-const defaultGS1Options: GS1Options = {
-  enabled: false,
-  moduleSize: 0.396, // minimum GS1 size in mm
-  printDPI: 300,
-  quietZone: 4,
-  enforceUppercase: true,
-  enforceMinimumSize: true
-};
-
 const defaultOptions: RequiredOptions = {
   type: "canvas",
   width: 300,
@@ -139,8 +109,7 @@ const defaultOptions: RequiredOptions = {
   },
   backgroundOptions: {
     color: "#fff"
-  },
-  gs1Options: defaultGS1Options
+  }
 };
 
 export default defaultOptions;
