@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ref, computed } from "vue";
 import QRCodeStyling from "./core/QRCodeStyling";
 import { DrawType } from "./types";
 
@@ -82,9 +81,8 @@ const props = withDefaults(defineProps<Props>(), {
   showGs1PrintGuide: false
 });
 
-// Add reactive variables for GS1 calculations
-const moduleCount = ref(29);
-const totalModules = ref(37);
+let moduleCount = 29;
+let totalModules = 37;
 
 let qrCodeOptions;
 if (props.gs1Mode) {
@@ -96,18 +94,15 @@ if (props.gs1Mode) {
   // GS1 data handling: support both traditional GTIN and GS1 Digital Link URLs
   let data = (props.value || "").replace(/[()]/g, "").toUpperCase();
 
-  // Check if it's a URL (contains http/https)
   const isUrl = /^https?:\/\//i.test(props.value);
 
   // Check for GS1 Digital Link format (URLs containing /01/GTIN pattern)
   const isGs1DigitalLink = /^https?:\/\//i.test(props.value) && /\/01\/\d{12,14}/.test(props.value);
 
   if (isGs1DigitalLink) {
-    // Valid GS1 Digital Link
     data = props.value;
     console.log("GS1 Digital Link detected:", data);
   } else if (isUrl) {
-    // URL but not GS1 Digital Link format
     console.warn(
       "GS1 QR: URL must contain /01/GTIN pattern for GS1 Digital Link. Example: https://s.cqr.to/01/01234567890123/21/HXjvPu"
     );
@@ -129,21 +124,21 @@ if (props.gs1Mode) {
         data,
         qrOptions: {
           typeNumber: 0, // Auto-detect version instead of forcing version 3
-          mode: isUrl ? "Byte" : "Alphanumeric", // Use Byte for URLs, Alphanumeric for GTIN
+          mode: isUrl ? "Byte" : "Alphanumeric", // Byte for URLs, Alphanumeric for GTIN
           errorCorrectionLevel: "M"
         }
       });
       if (tempQR._qr && typeof tempQR._qr.getModuleCount === "function") {
-        moduleCount.value = tempQR._qr.getModuleCount();
+        moduleCount = tempQR._qr.getModuleCount();
       }
     }
   } catch (e) {
     console.warn("GS1 tempQR error", e);
   }
   const quietZoneModules = 4; // 4 modules each side
-  totalModules.value = moduleCount.value + 2 * quietZoneModules;
+  totalModules = moduleCount + 2 * quietZoneModules;
   const xDimPx = X_DIM_MM * MM_TO_INCH * DPI;
-  let sizePx = Math.round(totalModules.value * xDimPx);
+  let sizePx = Math.round(totalModules * xDimPx);
   let marginPx = quietZoneModules * xDimPx;
   // Fallback to safe values if calculation fails
   if (!sizePx || isNaN(sizePx) || sizePx < 40) sizePx = 200;
