@@ -477,19 +477,25 @@ export default class QRCanvas {
     const canvasContext = this.context;
     if (!canvasContext) return;
 
-    // GS1 Standard font specifications
-    const fontSize = Math.max(6, Math.floor(this._options.height * 0.02)); // ~6pt at 300px height
-    const fontFamily = "Helvetica, Arial, sans-serif";
+    // GS1 Standard font specifications - matching the reference image
+    // Calculate font size to match the clean, professional look
+    const baseFontSize = Math.max(14, Math.floor(this._options.height * 0.035)); // Moderate size like the image
+    const fontFamily = "Arial, Helvetica, sans-serif"; // Clean sans-serif like the image
 
-    canvasContext.font = `${fontSize}px ${fontFamily}`;
+    // Enable font smoothing for crisp text
+    canvasContext.imageSmoothingEnabled = true;
+
+    // Set font with normal weight to match the image (not bold)
+    canvasContext.font = `normal ${baseFontSize}px ${fontFamily}`;
     canvasContext.fillStyle = "#000000";
     canvasContext.textAlign = "center";
-    canvasContext.textBaseline = "bottom";
+    canvasContext.textBaseline = "alphabetic";
 
-    // Position text at bottom center of canvas
+    // Calculate position to match the image spacing
     const x = this._options.width / 2;
-    const y = this._options.height - 8; // 8px from bottom
+    const y = this._options.height - Math.max(16, baseFontSize * 1.2); // Proper spacing like the image
 
+    // Draw clean text without stroke for crisp appearance
     canvasContext.fillText(this._options.associatedGtin, x, y);
   }
 }
