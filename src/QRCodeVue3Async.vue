@@ -31,6 +31,7 @@ export interface Props {
   gs1XDimension: number;
   associatedGtin?: string;
   showGs1PrintGuide?: boolean;
+  gs1TextHeightMm?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -78,7 +79,8 @@ const props = withDefaults(defineProps<Props>(), {
   gs1Dpi: 300,
   gs1XDimension: 0.396,
   associatedGtin: "",
-  showGs1PrintGuide: false
+  showGs1PrintGuide: false,
+  gs1TextHeightMm: undefined
 });
 
 let moduleCount = 29;
@@ -160,7 +162,8 @@ if (props.gs1Mode) {
     backgroundOptions: { color: "#fff" },
     cornersSquareOptions: { type: "square" as CornerSquareType, color: "#000" },
     cornersDotOptions: { type: undefined, color: "#000" },
-    associatedGtin: props.associatedGtin
+    associatedGtin: props.associatedGtin,
+    gs1TextHeightMm: props.gs1TextHeightMm
   };
 } else {
   qrCodeOptions = {

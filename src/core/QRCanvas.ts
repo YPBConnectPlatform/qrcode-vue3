@@ -475,27 +475,39 @@ export default class QRCanvas {
     if (!this._options.associatedGtin) return;
 
     const canvasContext = this.context;
-    if (!canvasContext) return;
+    if (!canvasContext || !this._qr) return;
 
-    // GS1 Standard font specifications - matching the reference image
-    // Calculate font size to match the clean, professional look
-    const baseFontSize = Math.max(14, Math.floor(this._options.height * 0.035)); // Moderate size like the image
-    const fontFamily = "Arial, Helvetica, sans-serif"; // Clean sans-serif like the image
+    const count = this._qr.getModuleCount();
+    const minSize = Math.min(this._options.width, this._options.height) - this._options.margin * 2;
+    const dotSize = Math.floor(minSize / count);
+    const yBeginning = Math.floor((this._options.height - count * dotSize) / 2);
+    const symbolBottom = yBeginning + count * dotSize;
 
-    // Enable font smoothing for crisp text
+    const quietZonePx = 4 * dotSize;
+    const extraGapPx = Math.max(Math.round(0.5 * dotSize), 4);
+    let baselineY = symbolBottom + quietZonePx + extraGapPx;
+    baselineY = Math.min(this._options.height - 2, baselineY);
+
+    // Prefer explicit mm height if provided
+    let fontPx: number | undefined;
+    if (typeof (this._options as any).gs1TextHeightMm === "number" && (this._options as any).gs1TextHeightMm > 0) {
+      const dpi = 96; // canvas CSS pixel DPI baseline; real print DPI should be handled upstream
+      const mmToInch = 1 / 25.4;
+      fontPx = Math.round((this._options as any).gs1TextHeightMm * mmToInch * dpi);
+    }
+    if (!fontPx) {
+      fontPx = Math.max(14, 4 * dotSize);
+    }
+
+    const fontFamily = "Verdana, Arial, Helvetica, sans-serif";
+
     canvasContext.imageSmoothingEnabled = true;
-
-    // Set font with normal weight to match the image (not bold)
-    canvasContext.font = `normal ${baseFontSize}px ${fontFamily}`;
+    canvasContext.font = `normal ${fontPx}px ${fontFamily}`;
     canvasContext.fillStyle = "#000000";
     canvasContext.textAlign = "center";
     canvasContext.textBaseline = "alphabetic";
 
-    // Calculate position to match the image spacing
     const x = this._options.width / 2;
-    const y = this._options.height - Math.max(16, baseFontSize * 1.2); // Proper spacing like the image
-
-    // Draw clean text without stroke for crisp appearance
-    canvasContext.fillText(this._options.associatedGtin, x, y);
+    canvasContext.fillText(this._options.associatedGtin, x, baselineY);
   }
 }

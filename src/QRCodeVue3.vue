@@ -31,6 +31,7 @@ export interface Props {
   gs1XDimension: number;
   associatedGtin?: string;
   showGs1PrintGuide?: boolean;
+  gs1TextHeightMm?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -111,6 +112,7 @@ const props = withDefaults(defineProps<Props>(), {
       :data-id-text="dataIdText"
       :associated-gtin="associatedGtin"
       :show-gs1-print-guide="showGs1PrintGuide"
+      :gs1-text-height-mm="gs1TextHeightMm"
     />
   </Suspense>
 </template>

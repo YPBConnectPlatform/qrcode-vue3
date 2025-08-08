@@ -57,6 +57,7 @@ export type Options = {
     gradient?: Gradient;
   };
   associatedGtin?: string;
+  gs1TextHeightMm?: number;
 };
 
 export interface RequiredOptions extends Options {
@@ -86,6 +87,7 @@ export interface RequiredOptions extends Options {
     gradient?: Gradient;
   };
   associatedGtin?: string;
+  gs1TextHeightMm?: number;
 }
 
 const defaultOptions: RequiredOptions = {
