@@ -30,6 +30,7 @@ export interface Props {
   gs1Dpi: number;
   gs1XDimension: number;
   associatedGtin?: string;
+  showGs1PrintGuide?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -109,6 +110,7 @@ const props = withDefaults(defineProps<Props>(), {
       :preview-image="previewImage"
       :data-id-text="dataIdText"
       :associated-gtin="associatedGtin"
+      :show-gs1-print-guide="showGs1PrintGuide"
     />
   </Suspense>
 </template>

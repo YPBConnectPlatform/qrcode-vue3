@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-//import { computed, reactive, ref, watch } from "vue";
+import { ref, computed } from "vue";
 import QRCodeStyling from "./core/QRCodeStyling";
 import { DrawType } from "./types";
 
@@ -31,6 +31,7 @@ export interface Props {
   gs1Dpi: number;
   gs1XDimension: number;
   associatedGtin?: string;
+  showGs1PrintGuide?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -76,8 +77,14 @@ const props = withDefaults(defineProps<Props>(), {
   },
   gs1Mode: false,
   gs1Dpi: 300,
-  gs1XDimension: 0.396
+  gs1XDimension: 0.396,
+  associatedGtin: "",
+  showGs1PrintGuide: false
 });
+
+// Add reactive variables for GS1 calculations
+const moduleCount = ref(29);
+const totalModules = ref(37);
 
 let qrCodeOptions;
 if (props.gs1Mode) {
@@ -116,7 +123,6 @@ if (props.gs1Mode) {
     }
   }
 
-  let moduleCount = 29;
   try {
     if (data) {
       const tempQR = new QRCodeStyling({
@@ -128,16 +134,16 @@ if (props.gs1Mode) {
         }
       });
       if (tempQR._qr && typeof tempQR._qr.getModuleCount === "function") {
-        moduleCount = tempQR._qr.getModuleCount();
+        moduleCount.value = tempQR._qr.getModuleCount();
       }
     }
   } catch (e) {
     console.warn("GS1 tempQR error", e);
   }
   const quietZoneModules = 4; // 4 modules each side
-  const totalModules = moduleCount + 2 * quietZoneModules;
+  totalModules.value = moduleCount.value + 2 * quietZoneModules;
   const xDimPx = X_DIM_MM * MM_TO_INCH * DPI;
-  let sizePx = Math.round(totalModules * xDimPx);
+  let sizePx = Math.round(totalModules.value * xDimPx);
   let marginPx = quietZoneModules * xDimPx;
   // Fallback to safe values if calculation fails
   if (!sizePx || isNaN(sizePx) || sizePx < 40) sizePx = 200;
@@ -189,18 +195,72 @@ defineExpose({ onDownloadClick });
 <template>
   <div>
     <div v-if="imageUrl" :class="myclass">
-      <img
-        id="qrImgEl"
-        :src="imageUrl"
-        :class="imgclass"
-        :width="previewImage.width"
-        :height="previewImage.height"
-        crossorigin="anonymous"
-        alt="QR Code"
-      />
-      <!-- GTIN Display -->
-      <div v-if="associatedGtin" class="text-center mt-2" style="font-size: 6pt; line-height: 1.2; color: #000">
-        {{ associatedGtin }}
+      <div :style="{ position: 'relative', display: 'inline-block' }">
+        <img
+          id="qrImgEl"
+          :src="imageUrl"
+          :class="imgclass"
+          :width="previewImage.width"
+          :height="previewImage.height"
+          crossorigin="anonymous"
+          alt="QR Code"
+        />
+        <!-- Associated GTIN display inside QR code boundary -->
+        <div
+          v-if="gs1Mode && associatedGtin"
+          class="gs1-associated-gtin"
+          :style="{
+            position: 'absolute',
+            bottom: '4px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            fontFamily: 'Arial, sans-serif',
+            fontSize: '10px',
+            fontWeight: 'normal',
+            textAlign: 'center',
+            color: '#000000',
+            backgroundColor: '#ffffff',
+            padding: '2px 6px',
+            borderRadius: '2px',
+            lineHeight: '1.2',
+            letterSpacing: '0.5px',
+            border: '1px solid #cccccc'
+          }"
+        >
+          {{ associatedGtin }}
+        </div>
+      </div>
+
+      <!-- GS1 Digital Link Print Guide -->
+      <div
+        v-if="gs1Mode && showGs1PrintGuide"
+        class="gs1-print-guide"
+        :style="{
+          backgroundColor: '#fffacd',
+          border: '1px solid #e6e6b8',
+          borderRadius: '4px',
+          padding: '12px',
+          marginTop: '12px',
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '11px',
+          lineHeight: '1.4',
+          color: '#333333'
+        }"
+      >
+        <div :style="{ fontWeight: 'bold', marginBottom: '8px', fontSize: '12px' }">GS1 Digital Link Print Guide</div>
+        <div :style="{ marginBottom: '4px' }">
+          <strong>QR size:</strong> {{ moduleCount }}x{{ moduleCount }} cells (with 4 margin each side =
+          {{ totalModules }}x{{ totalModules }} total cells)
+        </div>
+        <div :style="{ marginBottom: '4px' }">
+          <strong>Minimum print size:</strong> {{ (totalModules * 0.396).toFixed(2) }} mm
+        </div>
+        <div :style="{ marginBottom: '4px' }">
+          <strong>Target print size:</strong> {{ (totalModules * 0.495).toFixed(2) }} mm
+        </div>
+        <div :style="{ marginBottom: '4px' }">
+          <strong>Maximum print size:</strong> {{ (totalModules * 0.99).toFixed(2) }} mm
+        </div>
       </div>
     </div>
     <div v-if="imageUrl && download" class="text-center">
