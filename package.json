@@ -1,7 +1,7 @@
 {
   "name": "@ypbconnectplatform/qrcode-vue3",
   "private": false,
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Add a style and an image to your QR code Vue3",
   "main": "./dist/index.cjs.js",
   "types": "src/index.d.ts",

@@ -29,6 +29,7 @@ export interface Props {
   gs1Mode: boolean;
   gs1Dpi: number;
   gs1XDimension: number;
+  associatedGtin?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -107,6 +108,7 @@ const props = withDefaults(defineProps<Props>(), {
       :is-download-btn-disabled="props.isDownloadBtnDisabled"
       :preview-image="previewImage"
       :data-id-text="dataIdText"
+      :associated-gtin="associatedGtin"
     />
   </Suspense>
 </template>

@@ -30,6 +30,7 @@ export interface Props {
   gs1Mode: boolean;
   gs1Dpi: number;
   gs1XDimension: number;
+  associatedGtin?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -197,6 +198,10 @@ defineExpose({ onDownloadClick });
         crossorigin="anonymous"
         alt="QR Code"
       />
+      <!-- GTIN Display -->
+      <div v-if="associatedGtin" class="text-center mt-2" style="font-size: 6pt; line-height: 1.2; color: #000">
+        {{ associatedGtin }}
+      </div>
     </div>
     <div v-if="imageUrl && download" class="text-center">
       <button @click.prevent="onDownloadClick" :class="downloadButton" :data-id="dataIdText">
