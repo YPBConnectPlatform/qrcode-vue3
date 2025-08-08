@@ -56,6 +56,7 @@ export type Options = {
     color?: string;
     gradient?: Gradient;
   };
+  associatedGtin?: string;
 };
 
 export interface RequiredOptions extends Options {
@@ -84,6 +85,7 @@ export interface RequiredOptions extends Options {
     color: string;
     gradient?: Gradient;
   };
+  associatedGtin?: string;
 }
 
 const defaultOptions: RequiredOptions = {

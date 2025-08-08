@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import QRCodeStyling from "./core/QRCodeStyling";
-import { DrawType } from "./types";
+import { DrawType, TypeNumber, Mode, ErrorCorrectionLevel, DotType, CornerSquareType } from "./types";
 
 export interface Props {
   type: DrawType;
@@ -149,17 +149,18 @@ if (props.gs1Mode) {
     height: sizePx,
     margin: marginPx,
     qrOptions: {
-      typeNumber: 0, // Auto-detect version instead of forcing version 3
-      mode: isUrl ? "Byte" : "Alphanumeric", // Use Byte for URLs, Alphanumeric for GTIN
-      errorCorrectionLevel: "M"
+      typeNumber: 0 as TypeNumber, // Auto-detect version instead of forcing version 3
+      mode: (isUrl ? "Byte" : "Alphanumeric") as Mode, // Use Byte for URLs, Alphanumeric for GTIN
+      errorCorrectionLevel: "M" as ErrorCorrectionLevel
     },
     // GS1: no image, no custom styling
     image: "",
     imageOptions: { hideBackgroundDots: true, imageSize: 0, margin: 0 },
-    dotsOptions: { type: "square", color: "#000" },
+    dotsOptions: { type: "square" as DotType, color: "#000" },
     backgroundOptions: { color: "#fff" },
-    cornersSquareOptions: { type: "square", color: "#000" },
-    cornersDotOptions: { type: undefined, color: "#000" }
+    cornersSquareOptions: { type: "square" as CornerSquareType, color: "#000" },
+    cornersDotOptions: { type: undefined, color: "#000" },
+    associatedGtin: props.associatedGtin
   };
 } else {
   qrCodeOptions = {
@@ -190,41 +191,16 @@ defineExpose({ onDownloadClick });
 <template>
   <div>
     <div v-if="imageUrl" :class="myclass">
-      <div :style="{ position: 'relative', display: 'inline-block' }">
-        <img
-          id="qrImgEl"
-          :src="imageUrl"
-          :class="imgclass"
-          :width="previewImage.width"
-          :height="previewImage.height"
-          crossorigin="anonymous"
-          alt="QR Code"
-        />
-        <!-- Associated GTIN display inside QR code boundary -->
-        <div
-          v-if="gs1Mode && associatedGtin"
-          class="gs1-associated-gtin"
-          :style="{
-            position: 'absolute',
-            bottom: '4px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            fontFamily: 'Arial, sans-serif',
-            fontSize: '10px',
-            fontWeight: 'normal',
-            textAlign: 'center',
-            color: '#000000',
-            backgroundColor: '#ffffff',
-            padding: '2px 6px',
-            borderRadius: '2px',
-            lineHeight: '1.2',
-            letterSpacing: '0.5px',
-            border: '1px solid #cccccc'
-          }"
-        >
-          {{ associatedGtin }}
-        </div>
-      </div>
+      <!-- QR Code Image -->
+      <img
+        id="qrImgEl"
+        :src="imageUrl"
+        :class="imgclass"
+        :width="previewImage.width"
+        :height="previewImage.height"
+        crossorigin="anonymous"
+        alt="QR Code"
+      />
 
       <!-- GS1 Digital Link Print Guide -->
       <div

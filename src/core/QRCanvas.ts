@@ -124,6 +124,11 @@ export default class QRCanvas {
     if (this._options.image) {
       this.drawImage({ width: drawImageSize.width, height: drawImageSize.height, count, dotSize });
     }
+
+    // Draw GS1 Associated GTIN text if provided
+    if (this._options.associatedGtin) {
+      this.drawGtinText();
+    }
   }
 
   drawBackground(): void {
@@ -464,5 +469,27 @@ export default class QRCanvas {
     }
 
     return gradient;
+  }
+
+  drawGtinText(): void {
+    if (!this._options.associatedGtin) return;
+
+    const canvasContext = this.context;
+    if (!canvasContext) return;
+
+    // GS1 Standard font specifications
+    const fontSize = Math.max(6, Math.floor(this._options.height * 0.02)); // ~6pt at 300px height
+    const fontFamily = "Helvetica, Arial, sans-serif";
+
+    canvasContext.font = `${fontSize}px ${fontFamily}`;
+    canvasContext.fillStyle = "#000000";
+    canvasContext.textAlign = "center";
+    canvasContext.textBaseline = "bottom";
+
+    // Position text at bottom center of canvas
+    const x = this._options.width / 2;
+    const y = this._options.height - 8; // 8px from bottom
+
+    canvasContext.fillText(this._options.associatedGtin, x, y);
   }
 }
