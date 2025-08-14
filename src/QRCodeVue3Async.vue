@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import QRCodeStyling from "./core/QRCodeStyling";
+import QRCodeStylingGS1 from "./core/QRCodeStylingGS1";
 import { DrawType, TypeNumber, Mode, ErrorCorrectionLevel, DotType, CornerSquareType } from "./types";
 
 export interface Props {
@@ -165,6 +166,8 @@ if (props.gs1Mode) {
     associatedGtin: props.associatedGtin,
     gs1TextHeightMm: props.gs1TextHeightMm
   };
+  const qrCodeGS1 = new QRCodeStylingGS1();
+  qrCodeGS1.calculateTotalModules(moduleCount, totalModules);
 } else {
   qrCodeOptions = {
     data: props.value,
@@ -204,38 +207,6 @@ defineExpose({ onDownloadClick });
         crossorigin="anonymous"
         alt="QR Code"
       />
-
-      <!-- GS1 Digital Link Print Guide -->
-      <div
-        v-if="gs1Mode && showGs1PrintGuide"
-        class="gs1-print-guide"
-        :style="{
-          backgroundColor: '#fffacd',
-          border: '1px solid #e6e6b8',
-          borderRadius: '4px',
-          padding: '12px',
-          marginTop: '12px',
-          fontFamily: 'Arial, sans-serif',
-          fontSize: '11px',
-          lineHeight: '1.4',
-          color: '#333333'
-        }"
-      >
-        <div :style="{ fontWeight: 'bold', marginBottom: '8px', fontSize: '12px' }">GS1 Digital Link Print Guide</div>
-        <div :style="{ marginBottom: '4px' }">
-          <strong>QR size:</strong> {{ moduleCount }}x{{ moduleCount }} cells (with 4 margin each side =
-          {{ totalModules }}x{{ totalModules }} total cells)
-        </div>
-        <div :style="{ marginBottom: '4px' }">
-          <strong>Minimum print size:</strong> {{ (totalModules * 0.396).toFixed(2) }} mm
-        </div>
-        <div :style="{ marginBottom: '4px' }">
-          <strong>Target print size:</strong> {{ (totalModules * 0.495).toFixed(2) }} mm
-        </div>
-        <div :style="{ marginBottom: '4px' }">
-          <strong>Maximum print size:</strong> {{ (totalModules * 0.99).toFixed(2) }} mm
-        </div>
-      </div>
     </div>
     <div v-if="imageUrl && download" class="text-center">
       <button @click.prevent="onDownloadClick" :class="downloadButton" :data-id="dataIdText">

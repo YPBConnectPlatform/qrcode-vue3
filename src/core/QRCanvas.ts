@@ -475,48 +475,27 @@ export default class QRCanvas {
     if (!this._options.associatedGtin) return;
 
     const canvasContext = this.context;
-    if (!canvasContext || !this._qr) return;
+    if (!canvasContext) return;
 
-    const count = this._qr.getModuleCount();
-    const minSize = Math.min(this._options.width, this._options.height) - this._options.margin * 2;
-    const dotSize = Math.floor(minSize / count);
-    const yBeginning = Math.floor((this._options.height - count * dotSize) / 2);
-    const symbolBottom = yBeginning + count * dotSize;
+    // GS1 Standard font specifications - matching the reference image
+    // Calculate font size to match the clean, professional look
+    const baseFontSize = Math.max(14, Math.floor(this._options.height * 0.035)); // Moderate size like the image
+    const fontFamily = "Arial, Helvetica, sans-serif"; // Clean sans-serif like the image
 
-    // GS1 REQUIREMENT: 4×X quiet zone is MANDATORY regardless of HRI display
-    const quietZonePx = 4 * dotSize;
-
-    // Position HRI immediately adjacent to quiet zone (NO extra gap per GS1 specs)
-    let baselineY = symbolBottom + quietZonePx;
-    baselineY = Math.min(this._options.height - 2, baselineY);
-
-    // GS1 compliant font: OCR-B preferred, with fallbacks
-    const fontFamily = '"OCR-B", "Courier New", "Consolas", "Monaco", monospace';
-
-    // Font size calculation with GS1 compliance
-    let fontPx: number;
-    if (typeof (this._options as any).gs1TextHeightMm === "number" && (this._options as any).gs1TextHeightMm > 0) {
-      const dpi = 96;
-      const mmToInch = 1 / 25.4;
-      fontPx = Math.round((this._options as any).gs1TextHeightMm * mmToInch * dpi);
-    } else {
-      // Ensure minimum 3mm for logistics applications (GS1 requirement)
-      const minHeightMm = 3;
-      const minHeightPx = Math.round((minHeightMm / 25.4) * 96);
-      const proportionalSize = Math.max(12, Math.round(dotSize * 0.6)); // Reduced multiplier for better proportions
-      fontPx = Math.max(minHeightPx, proportionalSize);
-    }
-
-    // GS1 FORMAT REQUIREMENT: (01) + GTIN with parentheses around AI
-    const formattedGtin = `(01)${this._options.associatedGtin}`;
-
+    // Enable font smoothing for crisp text
     canvasContext.imageSmoothingEnabled = true;
-    canvasContext.font = `${fontPx}px ${fontFamily}`;
+
+    // Set font with normal weight to match the image (not bold)
+    canvasContext.font = `normal ${baseFontSize}px ${fontFamily}`;
     canvasContext.fillStyle = "#000000";
     canvasContext.textAlign = "center";
     canvasContext.textBaseline = "alphabetic";
 
-    const centerX = this._options.width / 2;
-    canvasContext.fillText(formattedGtin, centerX, baselineY);
+    // Calculate position to match the image spacing
+    const x = this._options.width / 2;
+    const y = this._options.height - Math.max(16, baseFontSize * 1.2); // Proper spacing like the image
+
+    // Draw clean text without stroke for crisp appearance
+    canvasContext.fillText(this._options.associatedGtin, x, y);
   }
 }

@@ -152,6 +152,11 @@ export default class QRCodeStylingGS1 extends QRCodeStyling {
     return this._gs1Options;
   }
 
+  // Get total modules to build printing guideline
+  calculateTotalModules(moduleCount: number, totalModules: number) {
+    return { moduleCount, totalModules };
+  }
+
   // Updated download method with GS1 support
   async download(downloadOptions?: Partial<DownloadOptions>): Promise<void> {
     if (!this._drawingPromise) return;
