@@ -76,8 +76,8 @@ const props = withDefaults(defineProps<Props>(), {
     height: 300
   },
   gs1Mode: false,
-  gs1Dpi: 300,
-  gs1XDimension: 0.396,
+  gs1Dpi: 600,
+  gs1XDimension: 0.4,
   associatedGtin: "",
   showGs1PrintGuide: false,
   gs1TextHeightMm: undefined
@@ -89,8 +89,8 @@ let totalModules = 37;
 let qrCodeOptions;
 if (props.gs1Mode) {
   // GS1 fixed settings
-  const X_DIM_MM = props.gs1XDimension || 0.396;
-  const DPI = props.gs1Dpi || 300;
+  const X_DIM_MM = props.gs1XDimension || 0.4;
+  const DPI = props.gs1Dpi || 600;
   const MM_TO_INCH = 1 / 25.4;
 
   // GS1 data handling: support both traditional GTIN and GS1 Digital Link URLs

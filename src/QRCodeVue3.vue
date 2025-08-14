@@ -76,8 +76,8 @@ const props = withDefaults(defineProps<Props>(), {
     height: 300
   },
   gs1Mode: false,
-  gs1Dpi: 300,
-  gs1XDimension: 0.396
+  gs1Dpi: 600,
+  gs1XDimension: 0.4
 });
 </script>
 

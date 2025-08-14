@@ -118,15 +118,15 @@ This library supports generating GS1-compliant QR codes for retail and packaging
 ### Props for GS1 mode
 
 - `gs1Mode` (boolean): Enable GS1-compliant QR code (default: false)
-- `gs1Dpi` (number): DPI for GS1 mode (default: 300)
-- `gs1XDimension` (number): X-dimension in mm (default: 0.396)
+- `gs1Dpi` (number): DPI for GS1 mode (default: 600)
+- `gs1XDimension` (number): X-dimension in mm (default: 0.40)
 
 ### Supported GS1 Data Formats
 
 #### 1. Traditional GS1 GTIN Format
 
 ```html
-<QRCodeVue3 value="(01)12345678901231" :gs1Mode="true" :gs1Dpi="300" :gs1XDimension="0.396" />
+<QRCodeVue3 value="(01)12345678901231" :gs1Mode="true" :gs1Dpi="600" :gs1XDimension="0.495" />
 ```
 
 - **Format**: `(01)GTIN` where GTIN is 12-14 digits
@@ -136,7 +136,7 @@ This library supports generating GS1-compliant QR codes for retail and packaging
 #### 2. GS1 Digital Link URLs
 
 ```html
-<QRCodeVue3 value="https://s.cqr.to/01/01234567890123/21/HXjvPu" :gs1Mode="true" :gs1Dpi="300" :gs1XDimension="0.396" />
+<QRCodeVue3 value="https://s.cqr.to/01/01234567890123/21/HXjvPu" :gs1Mode="true" :gs1Dpi="600" :gs1XDimension="0.495" />
 ```
 
 - **Format**: URLs containing `/01/GTIN` pattern

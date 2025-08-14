@@ -474,40 +474,40 @@ export default class QRCanvas {
   drawGtinText(): void {
     if (!this._options.associatedGtin) return;
 
-    const canvasContext = this.context;
-    if (!canvasContext || !this._qr) return;
+    const ctx = this.context;
+    if (!ctx || !this._qr) return;
 
-    const count = this._qr.getModuleCount();
+    const moduleCount = this._qr.getModuleCount();
     const minSize = Math.min(this._options.width, this._options.height) - this._options.margin * 2;
-    const dotSize = Math.floor(minSize / count);
-    const yBeginning = Math.floor((this._options.height - count * dotSize) / 2);
-    const symbolBottom = yBeginning + count * dotSize;
+    const moduleSize = Math.floor(minSize / moduleCount);
 
-    const quietZonePx = 4 * dotSize;
-    const extraGapPx = Math.max(Math.round(0.5 * dotSize), 4);
-    let baselineY = symbolBottom + quietZonePx + extraGapPx;
-    baselineY = Math.min(this._options.height - 2, baselineY);
+    // GS1: Quiet Zone = 4 modules on all sides
+    const quietZonePx = 4 * moduleSize;
+    const qrSizePx = moduleCount * moduleSize;
 
-    // Prefer explicit mm height if provided
-    let fontPx: number | undefined;
-    if (typeof (this._options as any).gs1TextHeightMm === "number" && (this._options as any).gs1TextHeightMm > 0) {
-      const dpi = 96; // canvas CSS pixel DPI baseline; real print DPI should be handled upstream
+    // Text baseline just outside bottom quiet zone
+    const baselineY = quietZonePx + qrSizePx + Math.max(Math.round(0.5 * moduleSize), 4);
+
+    // Font height: use gs1TextHeightMm if given, else min 2 mm or ~4 modules high
+    let fontPx: number;
+    if (typeof this._options.gs1TextHeightMm === "number" && this._options.gs1TextHeightMm > 0) {
       const mmToInch = 1 / 25.4;
-      fontPx = Math.round((this._options as any).gs1TextHeightMm * mmToInch * dpi);
+      fontPx = Math.round(this._options.gs1TextHeightMm * mmToInch * 96);
+    } else {
+      fontPx = Math.max(Math.round((2 / 25.4) * 96), 4 * moduleSize);
     }
-    if (!fontPx) {
-      fontPx = Math.max(14, 4 * dotSize);
-    }
 
-    const fontFamily = "Verdana, Arial, Helvetica, sans-serif";
+    // Font per GS1 HRI rules: OCR-B preferred, else Arial sans-serif
+    const fontFamily = "'OCR-B', Arial, sans-serif, Helvetica";
 
-    canvasContext.imageSmoothingEnabled = true;
-    canvasContext.font = `normal ${fontPx}px ${fontFamily}`;
-    canvasContext.fillStyle = "#000000";
-    canvasContext.textAlign = "center";
-    canvasContext.textBaseline = "alphabetic";
+    ctx.imageSmoothingEnabled = true;
+    ctx.font = `normal ${fontPx}px ${fontFamily}`;
+    ctx.fillStyle = "#000";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
 
-    const x = this._options.width / 2;
-    canvasContext.fillText(this._options.associatedGtin, x, baselineY);
+    // Format GTIN as HRI: (01) + GTIN with no spaces inside AI
+    const hriText = `(01)${this._options.associatedGtin}`;
+    ctx.fillText(hriText, this._options.width / 2, baselineY);
   }
 }
