@@ -474,40 +474,48 @@ export default class QRCanvas {
   drawGtinText(): void {
     if (!this._options.associatedGtin) return;
 
-    const ctx = this.context;
-    if (!ctx || !this._qr) return;
+    const canvasContext = this.context;
+    if (!canvasContext || !this._qr) return;
 
-    const moduleCount = this._qr.getModuleCount();
+    const count = this._qr.getModuleCount();
     const minSize = Math.min(this._options.width, this._options.height) - this._options.margin * 2;
-    const moduleSize = Math.floor(minSize / moduleCount);
+    const dotSize = Math.floor(minSize / count);
 
-    // GS1: Quiet Zone = 4 modules on all sides
-    const quietZonePx = 4 * moduleSize;
-    const qrSizePx = moduleCount * moduleSize;
+    const yBeginning = Math.floor((this._options.height - count * dotSize) / 2);
+    const symbolBottom = yBeginning + count * dotSize;
 
-    // Text baseline just outside bottom quiet zone
-    const baselineY = quietZonePx + qrSizePx + Math.max(Math.round(0.5 * moduleSize), 4);
+    // GS1 REQUIREMENT: 4×X quiet zone is MANDATORY
+    const quietZonePx = 4 * dotSize;
 
-    // Font height: use gs1TextHeightMm if given, else min 2 mm or ~4 modules high
+    // Position HRI immediately adjacent to quiet zone (NO extra gap)
+    let baselineY = symbolBottom + quietZonePx;
+    baselineY = Math.min(this._options.height - 2, baselineY);
+
+    // GS1 compliant font (OCR-B preferred)
+    const fontFamily = '"OCR-B", "Courier New", "Consolas", monospace';
+
+    // Font size calculation
     let fontPx: number;
     if (typeof this._options.gs1TextHeightMm === "number" && this._options.gs1TextHeightMm > 0) {
+      const dpi = 96;
       const mmToInch = 1 / 25.4;
-      fontPx = Math.round(this._options.gs1TextHeightMm * mmToInch * 96);
+      fontPx = Math.round(this._options.gs1TextHeightMm * mmToInch * dpi);
     } else {
-      fontPx = Math.max(Math.round((2 / 25.4) * 96), 4 * moduleSize);
+      // Minimum 3mm for logistics, or proportional
+      const minHeightPx = Math.round((3 / 25.4) * 96); // 3mm minimum
+      fontPx = Math.max(minHeightPx, Math.round(dotSize * 0.8));
     }
 
-    // Font per GS1 HRI rules: OCR-B preferred, else Arial sans-serif
-    const fontFamily = "'OCR-B', Arial, sans-serif, Helvetica";
+    // GS1 FORMAT: (01) + GTIN
+    const formattedGtin = `(01)${this._options.associatedGtin}`;
 
-    ctx.imageSmoothingEnabled = true;
-    ctx.font = `normal ${fontPx}px ${fontFamily}`;
-    ctx.fillStyle = "#000";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "top";
+    canvasContext.imageSmoothingEnabled = true;
+    canvasContext.font = `${fontPx}px ${fontFamily}`;
+    canvasContext.fillStyle = "#000000";
+    canvasContext.textAlign = "center";
+    canvasContext.textBaseline = "alphabetic";
 
-    // Format GTIN as HRI: (01) + GTIN with no spaces inside AI
-    const hriText = `(01)${this._options.associatedGtin}`;
-    ctx.fillText(hriText, this._options.width / 2, baselineY);
+    const centerX = this._options.width / 2;
+    canvasContext.fillText(formattedGtin, centerX, baselineY);
   }
 }
