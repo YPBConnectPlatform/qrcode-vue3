@@ -60,6 +60,17 @@ export type Options = {
   gs1TextHeightMm?: number;
 };
 
+export interface GS1ConfigOptions {
+  value: string;
+  associatedGtin?: string;
+  gs1XDimension?: number; // mm
+  gs1Dpi?: number;
+  gs1TextHeightMm?: number;
+  width?: number;
+  height?: number;
+  margin?: number;
+}
+
 export interface RequiredOptions extends Options {
   type?: DrawType;
   width: number;

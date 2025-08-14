@@ -480,33 +480,34 @@ export default class QRCanvas {
     const count = this._qr.getModuleCount();
     const minSize = Math.min(this._options.width, this._options.height) - this._options.margin * 2;
     const dotSize = Math.floor(minSize / count);
-
     const yBeginning = Math.floor((this._options.height - count * dotSize) / 2);
     const symbolBottom = yBeginning + count * dotSize;
 
-    // GS1 REQUIREMENT: 4×X quiet zone is MANDATORY
+    // GS1 REQUIREMENT: 4×X quiet zone is MANDATORY regardless of HRI display
     const quietZonePx = 4 * dotSize;
 
-    // Position HRI immediately adjacent to quiet zone (NO extra gap)
+    // Position HRI immediately adjacent to quiet zone (NO extra gap per GS1 specs)
     let baselineY = symbolBottom + quietZonePx;
     baselineY = Math.min(this._options.height - 2, baselineY);
 
-    // GS1 compliant font (OCR-B preferred)
-    const fontFamily = '"OCR-B", "Courier New", "Consolas", monospace';
+    // GS1 compliant font: OCR-B preferred, with fallbacks
+    const fontFamily = '"OCR-B", "Courier New", "Consolas", "Monaco", monospace';
 
-    // Font size calculation
+    // Font size calculation with GS1 compliance
     let fontPx: number;
-    if (typeof this._options.gs1TextHeightMm === "number" && this._options.gs1TextHeightMm > 0) {
+    if (typeof (this._options as any).gs1TextHeightMm === "number" && (this._options as any).gs1TextHeightMm > 0) {
       const dpi = 96;
       const mmToInch = 1 / 25.4;
-      fontPx = Math.round(this._options.gs1TextHeightMm * mmToInch * dpi);
+      fontPx = Math.round((this._options as any).gs1TextHeightMm * mmToInch * dpi);
     } else {
-      // Minimum 3mm for logistics, or proportional
-      const minHeightPx = Math.round((3 / 25.4) * 96); // 3mm minimum
-      fontPx = Math.max(minHeightPx, Math.round(dotSize * 0.8));
+      // Ensure minimum 3mm for logistics applications (GS1 requirement)
+      const minHeightMm = 3;
+      const minHeightPx = Math.round((minHeightMm / 25.4) * 96);
+      const proportionalSize = Math.max(12, Math.round(dotSize * 0.6)); // Reduced multiplier for better proportions
+      fontPx = Math.max(minHeightPx, proportionalSize);
     }
 
-    // GS1 FORMAT: (01) + GTIN
+    // GS1 FORMAT REQUIREMENT: (01) + GTIN with parentheses around AI
     const formattedGtin = `(01)${this._options.associatedGtin}`;
 
     canvasContext.imageSmoothingEnabled = true;

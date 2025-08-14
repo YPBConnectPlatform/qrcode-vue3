@@ -1,4 +1,5 @@
 import VQRCodeStyling from "./core/QRCodeStyling";
+import VQRCodeStylingGS1 from "./core/QRCodeStylingGS1";
 import dotTypes from "./constants/dotTypes";
 import cornerDotTypes from "./constants/cornerDotTypes";
 import cornerSquareTypes from "./constants/cornerSquareTypes";
@@ -16,6 +17,7 @@ export {
   errorCorrectionPercents,
   modes,
   qrTypes,
-  drawTypes
+  drawTypes,
+  VQRCodeStylingGS1
 };
 export default VQRCodeStyling;
