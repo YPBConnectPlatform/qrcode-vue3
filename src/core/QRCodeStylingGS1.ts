@@ -1,7 +1,7 @@
 import { CornerSquareType, DotType, DownloadOptions } from "@/types";
 import QRCodeStyling from "./QRCodeStyling";
 import { GS1ConfigOptions, RequiredOptions } from "./QROptions";
-import downloadURI from "@/tools/downloadURI";
+import downloadURI from "../tools/downloadURI";
 import QRSVG from "./QRSVG";
 
 export async function gs1Config(options: GS1ConfigOptions): Promise<RequiredOptions> {
