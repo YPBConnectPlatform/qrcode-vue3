@@ -166,8 +166,6 @@ if (props.gs1Mode) {
     associatedGtin: props.associatedGtin,
     gs1TextHeightMm: props.gs1TextHeightMm
   };
-  const qrCodeGS1 = new QRCodeStylingGS1();
-  qrCodeGS1.calculateTotalModules(moduleCount, totalModules);
 } else {
   qrCodeOptions = {
     data: props.value,
