@@ -4,7 +4,9 @@ import { GS1ConfigOptions, RequiredOptions } from "./QROptions";
 import downloadURI from "../tools/downloadURI";
 import QRSVG from "./QRSVG";
 
-export async function gs1Config(options: GS1ConfigOptions): Promise<RequiredOptions> {
+export async function gs1Config(
+  options: GS1ConfigOptions
+): Promise<{ qrCodeOptions: RequiredOptions; totalModules: number; moduleCount: number }> {
   const {
     value = "",
     associatedGtin,
@@ -126,7 +128,7 @@ export async function gs1Config(options: GS1ConfigOptions): Promise<RequiredOpti
     gs1TextHeightMm
   };
 
-  return qrCodeOptions;
+  return { qrCodeOptions, totalModules, moduleCount };
 }
 
 export default class QRCodeStylingGS1 extends QRCodeStyling {
@@ -136,7 +138,8 @@ export default class QRCodeStylingGS1 extends QRCodeStyling {
   // Enable GS1 mode and set configuration
   async setGS1Mode(gs1ConfigOptions: GS1ConfigOptions): Promise<void> {
     this._isGS1Mode = true;
-    this._gs1Options = await gs1Config(gs1ConfigOptions);
+    const { qrCodeOptions } = await gs1Config(gs1ConfigOptions);
+    this._gs1Options = qrCodeOptions;
 
     // Apply the GS1 configuration to the QR code
     this.update(this._gs1Options);
