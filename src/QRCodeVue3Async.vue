@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import QRCodeStyling from "./core/QRCodeStyling";
-import QRCodeStylingGS1 from "./core/QRCodeStylingGS1";
 import { DrawType, TypeNumber, Mode, ErrorCorrectionLevel, DotType, CornerSquareType } from "./types";
 
 export interface Props {
