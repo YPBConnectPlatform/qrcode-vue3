@@ -156,7 +156,8 @@ export default class QRCodeStylingGS1 extends QRCodeStyling {
   }
 
   // Get total modules to build printing guideline
-  calculateTotalModules(moduleCount: number, totalModules: number) {
+  async calculateTotalModules(options: GS1ConfigOptions) {
+    const { moduleCount, totalModules } = await gs1Config(options);
     return { moduleCount, totalModules };
   }
 
